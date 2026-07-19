@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,9 +13,11 @@ namespace EFDataAccessLayer.DatbaseClasses
         public static List<DTOClasses.CustomerDTO> GetAllCustomers()
         {
             List<DTOClasses.CustomerDTO> customers = new List<DTOClasses.CustomerDTO>();
+
             return customers;
         }
 
 
     }
+
 }
