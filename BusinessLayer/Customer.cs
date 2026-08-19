@@ -1,18 +1,15 @@
-﻿using System;
+﻿using EFDataAccessLayer.DatbaseClasses;
+using EFDataAccessLayer.DTOClasses;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
-using EFDataAccessLayer.DatbaseClasses;
-using EFDataAccessLayer.DTOClasses;
 namespace BusinessLayer
 {
     public class Customer
     {
-        public enum enMode { AddNew = 0, Update = 1 };
-        public enMode Mode = enMode.AddNew;
-        
-
         public int Id { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
@@ -21,7 +18,8 @@ namespace BusinessLayer
         public string Email { get; set; }
         public DateTime LastOrderDate { get; set; }
 
-       public CustomerDTO CDTO
+        [JsonIgnore]
+        public CustomerDTO CDTO
         {
             get
             {
@@ -29,20 +27,44 @@ namespace BusinessLayer
             }
         }
 
-        public Customer(CustomerDTO CDTO, enMode cMode = enMode.AddNew )
+       
+        public Customer(CustomerDTO cdto )
         {
-            this.Id = CDTO.Id;
-            this.FirstName = CDTO.FirstName;
-            this.LastName = CDTO.LastName;
-            this.Phone = CDTO.Phone;
-            this.Email = CDTO.Email;
-            this.NumberOfOrders = CDTO.NumberOfOrders;
-            this.LastOrderDate = CDTO.LastOrderDate;
-            Mode = cMode;
+            this.Id = cdto.Id;
+            this.FirstName = cdto.FirstName;
+            this.LastName = cdto.LastName;
+            this.Phone = cdto.Phone;
+            this.Email = cdto.Email;
+            this.NumberOfOrders = cdto.NumberOfOrders;
+            this.LastOrderDate = cdto.LastOrderDate;
+          
         }
         public static List<CustomerDTO> GetAllCustomers()
         {
             return CustomerDataAccess.GetAllCustomers();
+        }
+        public bool Add()
+        {
+            this.Id = CustomerDataAccess.Add(CDTO);
+            return this.Id != -1;
+        }
+       public static Customer Find(int id)
+       {
+            CustomerDTO customerDTO = CustomerDataAccess.Find(id);
+            if (customerDTO != null)
+            {
+                return new Customer(customerDTO);
+            }
+            return null;
+           
+       }
+        public bool Update()
+        {
+            return CustomerDataAccess.Update(CDTO);
+        }
+        public static bool Delete(int id)
+        {
+            return CustomerDataAccess.Delete(id);
         }
     }
 }
