@@ -48,15 +48,42 @@ namespace PresentationLayer.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public ActionResult<CustomerDTO> AddCustomer(CustomerDTO newCustomer)
         {
+            //DO NOT TAKE THE ID HERE
             if (newCustomer == null || string.IsNullOrEmpty(newCustomer.FirstName) || string.IsNullOrEmpty(newCustomer.LastName)
                 || newCustomer.Phone.Length != 10 || string.IsNullOrEmpty(newCustomer.Phone)|| newCustomer.LastOrderDate > DateTime.Now)
             {
+                //Better UI this way Change how u want tho
+                if (newCustomer == null)
+                {
+                    return BadRequest("Customer Empty");
+                }
+                if (string.IsNullOrEmpty(newCustomer.FirstName))
+                {
+                    return BadRequest("Empty First name");
+                }
+                if (string.IsNullOrEmpty(newCustomer.LastName))
+                {
+                    return BadRequest("Empty last Name");
+                }
+                if (newCustomer.Phone.Length != 10)
+                {
+                    return BadRequest("NO 10's!!");
+                }
+                if (string.IsNullOrEmpty(newCustomer.Phone))
+                {
+                    return BadRequest("Empty Phone Number");
+                }
+                if (newCustomer.LastOrderDate > DateTime.Now)
+                {
+                    return BadRequest("OrderDate Not Rihgt");
+                }
                 return BadRequest("Not Accepted Data");
             }
             BusinessLayer.Customer customer = new BusinessLayer.Customer(newCustomer);
            
             if (customer.Add())
             {
+                // ديما غلط  شوف ايه المشكله و حلها يا عبدو  ID هنا 
                 newCustomer.Id = customer.Id;
                 return CreatedAtRoute("FindCustomerByID", new { Id = newCustomer.Id }, newCustomer);
             }
@@ -102,19 +129,9 @@ namespace PresentationLayer.Controllers
 
         public ActionResult DeleteStudent(int id)
         {
-            if (id < 1)
-            {
-                return BadRequest($"Not Accepted ID  : {id}");
-            }
-
-            if (BusinessLayer.Customer.Delete(id))
-            {
-                return Ok($"Customer with ID : {id} has been deleted");
-            }
-            else
-            {
-                return NotFound($"Customer with ID {id} not found ");
-            }
+            // Logic Very BAD FIX IT 
+            BusinessLayer.Customer.Delete(id);
+            return Ok("som happend prop");
 
 
         }

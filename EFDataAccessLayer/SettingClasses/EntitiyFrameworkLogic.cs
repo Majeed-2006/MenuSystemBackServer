@@ -14,6 +14,7 @@ namespace EFDataAccessLayer.SettingClasses
     {
         //add a refrence to the classes we want this is optional but very clean 
         public DbSet<DTOClasses.CustomerDTO> Customers { get; set; } = null!;
+        public DbSet<DTOClasses.OrderItemDTO> OrderItem { get; set; } = null!; 
         
         // takes into account all the entity Framecore configuration and builds them here 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
