@@ -13,13 +13,13 @@ namespace EFDataAccessLayer.DTOClasses
         public int Quantity { get; set; }
         public int ProductID { get; set; }
         public float UnitPrice { get; set; }
-        public OrderItemDTO(int id,int orderId,int qantity,int productId,float unitPrice)
+        public OrderItemDTO(int id,int orderID, int quantity, int productID, float unitPrice)
         {
             Id = id;
-            OrderID = orderId;     
-            Quantity = qantity;
-            ProductID = productId;
-            UnitPrice = unitPrice; 
+            OrderID = orderID;
+            Quantity = quantity;
+            ProductID = productID;
+            UnitPrice = unitPrice;
         }
     }
 }

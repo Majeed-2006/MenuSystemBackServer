@@ -14,19 +14,19 @@ namespace EFDataAccessLayer.DTOClasses
         public string Name { get; set; }
         public string Description { get; set; }
         public float Price { get; set; }
-        public bool IsAvliable { get; set; }    
+        public bool IsAvilable { get; set; }    
         public int CreatedByUserID { get; set; }    
         public int CategoryID { get; set; }
 
-        public ProductDTO(int id, string name, string discription, float price, bool isAvilable,int createdByUserId,int categoryId)
+        public ProductDTO(int id, string name, string description, float price, bool isAvilable,int createdByUserID, int categoryID)
         {
             Id = id;
             Name = name;
-            Description = discription;
+            Description = description;
             Price = price;
-            IsAvliable = isAvilable;
-            CreatedByUserID = createdByUserId;
-            CategoryID = categoryId;
+            IsAvilable = isAvilable;
+            CreatedByUserID = createdByUserID;
+            CategoryID = categoryID;
         }
     }
 }
