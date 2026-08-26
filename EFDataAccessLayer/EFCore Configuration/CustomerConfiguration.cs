@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using EFDataAccessLayer.DTOClasses;
+using EFDataAccessLayer.EntityClasses;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace EFDataAccessLayer.EFCore_Configuration
 {
-    public class CustomerConfiguration : IEntityTypeConfiguration<CustomerDTO>
+    public class CustomerConfiguration : IEntityTypeConfiguration<Customer>
     {
-        public void Configure(EntityTypeBuilder<CustomerDTO> entity)
+        public void Configure(EntityTypeBuilder<Customer> entity)
         {
             entity.ToTable("Customers");      // Table name
 

@@ -9,9 +9,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace EFDataAccessLayer.EFCore_Configuration
 {
-    internal class ProductsConfig : IEntityTypeConfiguration<ProductDTO>
+    internal class ProductsConfig : IEntityTypeConfiguration<Product>
     {
-        public void Configure(EntityTypeBuilder<ProductDTO> entity)
+        public void Configure(EntityTypeBuilder<Product> entity)
         {
             entity.ToTable("Products");      // Table name
 

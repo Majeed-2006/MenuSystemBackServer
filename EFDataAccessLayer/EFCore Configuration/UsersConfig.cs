@@ -9,9 +9,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace EFDataAccessLayer.EFCore_Configuration
 {
-    internal class UsersConfig : IEntityTypeConfiguration<UserDTO>
+    internal class UsersConfig : IEntityTypeConfiguration<User>
     {
-        public void Configure(EntityTypeBuilder<UserDTO> entity)
+        public void Configure(EntityTypeBuilder<User> entity)
         {
             entity.ToTable("Users");      // Table name
 

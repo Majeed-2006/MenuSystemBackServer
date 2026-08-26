@@ -1,36 +1,37 @@
-﻿using System;
+﻿
+using EFDataAccessLayer.EntityClasses;
+using EFDataAccessLayer.SettingClasses;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
-using EFDataAccessLayer.DTOClasses;
-using EFDataAccessLayer.SettingClasses;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 
 namespace EFDataAccessLayer.DatbaseClasses
 {
     public class CustomerDataAccess
     {
-        public static List<DTOClasses.CustomerDTO> GetAllCustomers()
+        public static List<Customer> GetAllCustomers()
         {
             using var context = new EntitiyFrameworkLogic();
             return context.Customers.ToList();
         }
 
-        public static CustomerDTO Find(int id)
+        public static Customer Find(int id)
         {
-            CustomerDTO customer = null;
+            Customer customer = null;
             using var context = new EntitiyFrameworkLogic();
             customer = context.Customers.FirstOrDefault(x=> x.Id == id);
             return customer;
         }
 
-        public static bool Update(CustomerDTO customer)
+        public static bool Update(Customer customer)
         {
             using var context = new EntitiyFrameworkLogic();
-            CustomerDTO UpdatedCustomer =  context.Customers.Single(x=> x.Id ==customer.Id);
+            Customer UpdatedCustomer =  context.Customers.Single(x=> x.Id ==customer.Id);
 
             if (UpdatedCustomer!= null)
             {
@@ -45,10 +46,10 @@ namespace EFDataAccessLayer.DatbaseClasses
             }
             return false;
         }
-        public static bool UpdateFirstName(CustomerDTO customer)
+        public static bool UpdateFirstName(Customer customer)
         {
             using var context = new EntitiyFrameworkLogic();
-            CustomerDTO UpdatedCustomer = context.Customers.Single(x => x.Id == customer.Id);
+            Customer UpdatedCustomer = context.Customers.Single(x => x.Id == customer.Id);
 
             if (UpdatedCustomer != null)
             {
@@ -58,10 +59,10 @@ namespace EFDataAccessLayer.DatbaseClasses
             }
             return false;
         }
-        public static bool UpdateLastName(CustomerDTO customer)
+        public static bool UpdateLastName(Customer customer)
         {
             using var context = new EntitiyFrameworkLogic();
-            CustomerDTO UpdatedCustomer = context.Customers.Single(x => x.Id == customer.Id);
+            Customer UpdatedCustomer = context.Customers.Single(x => x.Id == customer.Id);
 
             if (UpdatedCustomer != null)
             {
@@ -71,10 +72,10 @@ namespace EFDataAccessLayer.DatbaseClasses
             }
             return false;
         }
-        public static bool UpdatePhone(CustomerDTO customer)
+        public static bool UpdatePhone(Customer customer)
         {
             using var context = new EntitiyFrameworkLogic();
-            CustomerDTO UpdatedCustomer = context.Customers.Single(x => x.Id == customer.Id);
+            Customer UpdatedCustomer = context.Customers.Single(x => x.Id == customer.Id);
 
             if (UpdatedCustomer != null)
             {
@@ -84,10 +85,10 @@ namespace EFDataAccessLayer.DatbaseClasses
             }
             return false;
         }
-        public static bool UpdateNumberOfOrders(CustomerDTO customer)
+        public static bool UpdateNumberOfOrders(Customer customer)
         {
             using var context = new EntitiyFrameworkLogic();
-            CustomerDTO UpdatedCustomer = context.Customers.Single(x => x.Id == customer.Id);
+            Customer UpdatedCustomer = context.Customers.Single(x => x.Id == customer.Id);
 
             if (UpdatedCustomer != null)
             {
@@ -97,10 +98,10 @@ namespace EFDataAccessLayer.DatbaseClasses
             }
             return false;
         }
-        public static bool UpdateEmail(CustomerDTO customer)
+        public static bool UpdateEmail(Customer customer)
         {
             using var context = new EntitiyFrameworkLogic();
-            CustomerDTO UpdatedCustomer = context.Customers.Single(x => x.Id == customer.Id);
+            Customer UpdatedCustomer = context.Customers.Single(x => x.Id == customer.Id);
 
             if (UpdatedCustomer != null)
             {
@@ -110,10 +111,10 @@ namespace EFDataAccessLayer.DatbaseClasses
             }
             return false;
         }
-        public static bool UpdateLastOrderDate(CustomerDTO customer)
+        public static bool UpdateLastOrderDate(Customer customer)
         {
             using var context = new EntitiyFrameworkLogic();
-            CustomerDTO UpdatedCustomer = context.Customers.Single(x => x.Id == customer.Id);
+            Customer UpdatedCustomer = context.Customers.Single(x => x.Id == customer.Id);
 
             if (UpdatedCustomer != null)
             {
@@ -123,12 +124,21 @@ namespace EFDataAccessLayer.DatbaseClasses
             }
             return false;
         }
-        public static int Add(CustomerDTO NewCustomer)
+        public static int Add(Customer newCustomer)
         {
-            using var context = new EntitiyFrameworkLogic();
-            context.Customers.Add(NewCustomer);
-            context.SaveChanges();
-            return 1;
+            try
+            {
+                using var context = new EntitiyFrameworkLogic();
+                context.Customers.Add(newCustomer);
+                context.SaveChanges();
+                return newCustomer.Id;
+            }
+            catch (Exception ex)
+            {
+                return -1;
+            }
+           
+           
         }
         public static bool Delete(int id)
         {
@@ -139,6 +149,10 @@ namespace EFDataAccessLayer.DatbaseClasses
             }
             context.Customers.Remove(context.Customers.Single(x=>x.Id == id));
             context.SaveChanges();
+            return true;
+        }
+        public static bool IsExist(int id)
+        {
             return true;
         }
     }

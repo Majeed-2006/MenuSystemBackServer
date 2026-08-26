@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using EFDataAccessLayer.DTOClasses;
+using App.API.DTOClasses;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace EFDataAccessLayer.EFCore_Configuration
 {
-    public class CategoriesConfiguration : IEntityTypeConfiguration<CategoryDTO>
+    public class CategoriesConfiguration : IEntityTypeConfiguration<Category>
     {
-        public void Configure(EntityTypeBuilder<CategoryDTO> entity)
+        public void Configure(EntityTypeBuilder<Category> entity)
         {
             entity.ToTable("Categories");
 

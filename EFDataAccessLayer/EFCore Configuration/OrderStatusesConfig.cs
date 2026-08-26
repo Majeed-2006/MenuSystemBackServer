@@ -9,9 +9,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace EFDataAccessLayer.EFCore_Configuration
 {
-    public class OrderStatusesConfig : IEntityTypeConfiguration<OrderStatusDTO>
+    public class OrderStatusesConfig : IEntityTypeConfiguration<OrderStatus>
     {
-        public void Configure(EntityTypeBuilder<OrderStatusDTO> entity)
+        public void Configure(EntityTypeBuilder<OrderStatus> entity)
         {
             entity.ToTable("OrderStatuses");      // Table name
 

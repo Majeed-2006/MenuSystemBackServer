@@ -1,4 +1,4 @@
-﻿namespace EFDataAccessLayer.DTOClasses
+﻿namespace App.API.DTOClasses
 {
     public class CategoryDTO
     {

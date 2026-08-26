@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EFDataAccessLayer.DTOClasses
+namespace BusinessLayer.DTOClasses.Customers.CustomerDTO
 {
     public class CustomerDTO
     {

@@ -1,20 +1,21 @@
-﻿using System;
+﻿using EFDataAccessLayer.DTOClasses;
+using EFDataAccessLayer.EntityClasses;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
-using EFDataAccessLayer.DTOClasses;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 
 namespace EFDataAccessLayer.SettingClasses
 {
     internal class EntitiyFrameworkLogic : DbContext
     {
         //add a refrence to the classes we want this is optional but very clean 
-        public DbSet<DTOClasses.CustomerDTO> Customers { get; set; } = null!;
-        public DbSet<DTOClasses.OrderItemDTO> OrderItem { get; set; } = null!; 
+        public DbSet<Customer> Customers { get; set; } = null!;
+        public DbSet<OrderItem> OrderItem { get; set; } = null!; 
         
         // takes into account all the entity Framecore configuration and builds them here 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

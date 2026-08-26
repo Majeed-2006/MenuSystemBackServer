@@ -1,12 +1,14 @@
 ﻿using BusinessLayer;
-using EFDataAccessLayer.DTOClasses;
+using BusinessLayer.DTOClasses.Customers;
+using BusinessLayer.DTOClasses.Customers.CustomerDTO;
+using BusinessLayer.DTOClasses.Customers.CustomerSaveDTO;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 namespace PresentationLayer.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CustomerApiControllers : ControllerBase
+    public class CustomerController : ControllerBase
     {
 
         [HttpGet("All", Name = "GetAllCustomers")]
@@ -14,7 +16,7 @@ namespace PresentationLayer.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult<IEnumerable<CustomerDTO>> GetAllCustomers()
         {
-            List<CustomerDTO> CustomersList = BusinessLayer.Customer.GetAllCustomers();
+            List<CustomerDTO> CustomersList = CustomerService.GetAllCustomers();
             if (CustomersList.Count == 0)
             {
                 return NotFound("no Customer found");
@@ -22,31 +24,38 @@ namespace PresentationLayer.Controllers
             return Ok(CustomersList);
         }
 
-        [HttpGet("{Id}", Name = "FindCustomerByID")]
+
+
+
+        [HttpGet("{id}", Name = "FindCustomerByID")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<CustomerDTO> GetStudentByID(int Id)
+        public ActionResult<CustomerDTO> FindCustomertByID(int id)
         {
 
-            if (Id < 1)
+            if (id < 1)
             {
-                return BadRequest($"Not Accepted ID  : {Id}");
+                return BadRequest($"Not Accepted ID  : {id}");
             }
-            BusinessLayer.Customer customer = BusinessLayer.Customer.Find(Id);
-            if (customer == null)
+            CustomerService service= CustomerService.Find(id);
+            if (service== null)
             {
-                return NotFound($"Customer with ID {Id} not found ");
+                return NotFound($"Customer with ID {id} not found ");
             }
-            return Ok(customer.CDTO);
+            return Ok(service.ConvertToDTO());
 
         }
+
+
+
+
 
         [HttpPost(Name = "PostAddCustomer")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ActionResult<CustomerDTO> AddCustomer(CustomerDTO newCustomer)
+        public ActionResult<CustomerDTO> AddCustomer(CustomerSaveDTO newCustomer)
         {
             //DO NOT TAKE THE ID HERE
             if (newCustomer == null || string.IsNullOrEmpty(newCustomer.FirstName) || string.IsNullOrEmpty(newCustomer.LastName)
@@ -79,23 +88,30 @@ namespace PresentationLayer.Controllers
                 }
                 return BadRequest("Not Accepted Data");
             }
-            BusinessLayer.Customer customer = new BusinessLayer.Customer(newCustomer);
-           
-            if (customer.Add())
+
+            CustomerService customer = new CustomerService(newCustomer);
+            int id = customer.Add();
+            if (id != -1)
             {
-                // ديما غلط  شوف ايه المشكله و حلها يا عبدو  ID هنا 
-                newCustomer.Id = customer.Id;
-                return CreatedAtRoute("FindCustomerByID", new { Id = newCustomer.Id }, newCustomer);
+               CustomerDTO customerDTO =  new CustomerDTO(id, newCustomer.FirstName,newCustomer.LastName,newCustomer.Phone,
+                                                           newCustomer.NumberOfOrders,newCustomer.Email,newCustomer.LastOrderDate);
+                return CreatedAtRoute("FindCustomerByID", new { Id = id },customerDTO);
             }
             return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while adding the customer.");
         }
-        [HttpPut(Name = "UpdateCustomer")]
+
+
+
+
+
+        [HttpPut("{id}",Name = "UpdateCustomer")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<Customer> UpdateCustomer( CustomerDTO updatedCustomer)
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public ActionResult<CustomerService> UpdateCustomer( int id,CustomerSaveDTO updatedCustomer)
         {
-            if (updatedCustomer.Id < 1 || updatedCustomer == null || string.IsNullOrEmpty(updatedCustomer.FirstName) 
+            if  (id < 1 || updatedCustomer == null || string.IsNullOrEmpty(updatedCustomer.FirstName) 
                 || string.IsNullOrEmpty(updatedCustomer.LastName) || updatedCustomer.Phone.Length != 10 
                 || string.IsNullOrEmpty(updatedCustomer.Phone) || updatedCustomer.LastOrderDate > DateTime.Now)
            
@@ -103,36 +119,33 @@ namespace PresentationLayer.Controllers
                 return BadRequest("Invalid customer data.");
             }
 
-            BusinessLayer.Customer customer = BusinessLayer.Customer.Find(updatedCustomer.Id);
-
-            if (customer == null)
+            CustomerService service = CustomerService.Find(id);
+            if (service == null)
             {
-                return NotFound($"Customer with ID {updatedCustomer.Id} not found.");
+                return NotFound($"Customer with ID {id} not found.");
             }
+          
 
-            customer.FirstName = updatedCustomer.FirstName;
-            customer.LastName = updatedCustomer.LastName;
-            customer.Email = updatedCustomer.Email;
-            customer.Phone = updatedCustomer.Phone;
-            customer.NumberOfOrders = updatedCustomer.NumberOfOrders;
-            customer.LastOrderDate = updatedCustomer.LastOrderDate;
-            customer.Update();
-            return Ok(customer);
+           if( service.Update(updatedCustomer))
+               return Ok(service.ConvertToDTO());          
+            else
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while updating the customer.");
+
         }
 
-
-
-        [HttpDelete("{Id}", Name = "DeleteCustomer")]
+        [HttpDelete("{id}", Name = "DeleteCustomer")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
 
-        public ActionResult DeleteStudent(int id)
+        public ActionResult DeleteCustomer(int id)
         {
-            // Logic Very BAD FIX IT 
-            BusinessLayer.Customer.Delete(id);
-            return Ok("som happend prop");
-
+            if (id < 1)
+                return BadRequest("Invalid ID");
+            if(CustomerService.Delete(id))
+                return Ok("Customer was deleted");
+            else
+                return NotFound($"Customer with ID {id} not found.");
 
         }
 
