@@ -14,10 +14,10 @@ namespace EFDataAccessLayer.DatbaseClasses
 {
     public class CustomerDataAccess
     {
-        public static List<Customer> GetAllCustomers()
+        public async static Task<List<Customer>> GetAllCustomers()
         {
             using var context = new EntitiyFrameworkLogic();
-            return context.Customers.ToList();
+            return await context.Customers.ToListAsync();
         }
 
         public static Customer Find(int id)

@@ -1,8 +1,10 @@
-﻿using BusinessLayer.DTOClasses.Customers;
+﻿using App.API.GlobalExceptionHandler.Exceptions;
+using BusinessLayer.DTOClasses.Customers;
 using BusinessLayer.DTOClasses.Customers.CustomerDTO;
 using BusinessLayer.DTOClasses.Customers.CustomerSaveDTO;
 using EFDataAccessLayer.DatbaseClasses;
 using EFDataAccessLayer.EntityClasses;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -41,10 +43,16 @@ namespace BusinessLayer
             return new CustomerDTO(_EntityCustomer.Id, _EntityCustomer.FirstName, _EntityCustomer.LastName, _EntityCustomer.Phone,
                                    _EntityCustomer.NumberOfOrders, _EntityCustomer.Email, _EntityCustomer.LastOrderDate);
         }
-        public static List<CustomerDTO> GetAllCustomers()
+        public async static Task<List<CustomerDTO>> GetAllCustomers()
         {
-            List<CustomerDTO> customerDTOs = CustomerDataAccess.GetAllCustomers().Select(c => new CustomerDTO(
-            
+            var customerDTOs = await CustomerDataAccess.GetAllCustomers();
+            if (customerDTOs.ToList().IsNullOrEmpty())
+            {
+                throw new BusinessException("empty List");
+            }
+
+            return customerDTOs.Select(c => new CustomerDTO(
+
                 c.Id,
                 c.FirstName,
                 c.LastName,
@@ -53,9 +61,7 @@ namespace BusinessLayer
                 c.Email,
                 c.LastOrderDate
 
-            )).ToList();
-
-            return customerDTOs;
+            )).ToList(); ;
         }
         public int Add()
         {

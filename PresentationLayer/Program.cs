@@ -7,7 +7,10 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 var app = builder.Build();
+
+app.UseExceptionHandler(options => { });
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

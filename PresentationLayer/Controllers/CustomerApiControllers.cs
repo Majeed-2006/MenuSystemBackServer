@@ -14,13 +14,10 @@ namespace PresentationLayer.Controllers
         [HttpGet("All", Name = "GetAllCustomers")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<IEnumerable<CustomerDTO>> GetAllCustomers()
+        public async Task<ActionResult<IEnumerable<CustomerDTO>>> GetAllCustomers()
         {
-            List<CustomerDTO> CustomersList = CustomerService.GetAllCustomers();
-            if (CustomersList.Count == 0)
-            {
-                return NotFound("no Customer found");
-            }
+            List<CustomerDTO> CustomersList = await CustomerService.GetAllCustomers();
+            
             return Ok(CustomersList);
         }
 
