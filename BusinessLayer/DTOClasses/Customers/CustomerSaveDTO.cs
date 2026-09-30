@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EFDataAccessLayer.EntityClasses;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,15 +16,18 @@ namespace BusinessLayer.DTOClasses.Customers.CustomerSaveDTO
         public int NumberOfOrders { get; set; }
         public string Email { get; set; }
         public DateTime LastOrderDate { get; set; }
+        public int  RestaurantId {  get; set; }
 
-        public CustomerSaveDTO(string firstName, string lastName, string phone, int numberOfOrders, string email, DateTime lastOrderDate)
+        public CustomerSaveDTO(string firstName, string lastName, string phone, int numberOfOrders, string email,
+                               DateTime lastOrderDate, int restaurantId)
         {
-           FirstName = firstName;
+            FirstName = firstName;
             LastName = lastName;
             Phone = phone;
             NumberOfOrders = numberOfOrders;
             Email = email;
             LastOrderDate = lastOrderDate;
+            RestaurantId = restaurantId;
         }
     }
 }

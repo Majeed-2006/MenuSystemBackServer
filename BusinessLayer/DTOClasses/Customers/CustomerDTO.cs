@@ -15,8 +15,9 @@ namespace BusinessLayer.DTOClasses.Customers.CustomerDTO
         public int NumberOfOrders { get; set; }
         public string Email { get; set; }
         public DateTime LastOrderDate { get; set; }
-
-        public CustomerDTO(int id, string firstName, string lastName, string phone, int numberOfOrders, string email, DateTime lastOrderDate)
+        public int RestaurantId { get; set; }
+        public CustomerDTO(int id, string firstName, string lastName, string phone, int numberOfOrders, string email,
+                           DateTime lastOrderDate,int restaurantId)
         {
             Id  = id;
             FirstName = firstName;
@@ -25,6 +26,7 @@ namespace BusinessLayer.DTOClasses.Customers.CustomerDTO
             NumberOfOrders = numberOfOrders;
             Email = email;
             LastOrderDate = lastOrderDate;
+            RestaurantId = restaurantId;
         }
 
     }

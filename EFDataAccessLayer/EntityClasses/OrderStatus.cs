@@ -1,16 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace EFDataAccessLayer.DTOClasses
+﻿namespace EFDataAccessLayer.EntityClasses
 {
-    public class OrderStatus
+    public partial class OrderStatus
     {
+        //Primitive Properties
         public int Id { get; set; }
-        public string EngName { get; set; }
-        public string ArName { get; set; }
-       
+        public string EngName { get; set; } = null!;
+        public string? ArName { get; set; }
+
+        //Navigation Property
+        public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
     }
 }
+

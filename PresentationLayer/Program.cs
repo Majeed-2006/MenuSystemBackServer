@@ -1,13 +1,33 @@
+using BusinessLayer.Services;
+using BusinessLayer.Utitlity;
+using EFDataAccessLayer.DatbaseClasses;
+using EFDataAccessLayer.SettingClasses;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc.NewtonsoftJson;
+using System;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddScoped<AppDbContext>();
+builder.Services.AddScoped<CustomerDataAccess>();
+builder.Services.AddScoped<CustomerService>();
+builder.Services.AddScoped<UserDataAccess>();
+builder.Services.AddScoped<UserService>();
+
+//builder.Services.AddControllers();
+builder.Services.AddControllers()
+                .AddNewtonsoftJson(); 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+builder.Services.AddBusinessServices(connectionString);
+
+//builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 var app = builder.Build();
 
 app.UseExceptionHandler(options => { });

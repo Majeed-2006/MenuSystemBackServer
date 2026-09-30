@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using EFDataAccessLayer.DTOClasses;
+using EFDataAccessLayer.EntityClasses;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -18,13 +18,15 @@ namespace EFDataAccessLayer.EFCore_Configuration
             entity.HasKey(p => p.Id);
 
             entity.Property(p => p.Id)
-                  .HasColumnName("StateID"); 
-
+                  .HasColumnName("StateID");
+                   
             entity.Property(p => p.EngName)
-                  .HasColumnName("StateNameEng"); 
+                  .HasColumnName("StateNameEng")
+                   .HasMaxLength(40);
 
             entity.Property(p => p.ArName)
-                  .HasColumnName("StateNameAr"); 
+                  .HasColumnName("StateNameAr")
+                  .HasMaxLength(40);
         }
     }
 }

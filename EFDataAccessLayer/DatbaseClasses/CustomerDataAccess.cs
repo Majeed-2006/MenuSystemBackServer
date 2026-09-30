@@ -14,123 +14,153 @@ namespace EFDataAccessLayer.DatbaseClasses
 {
     public class CustomerDataAccess
     {
-        public async static Task<List<Customer>> GetAllCustomers()
+        private readonly AppDbContext _Context;
+
+        public CustomerDataAccess(AppDbContext context)
         {
-            using var context = new EntitiyFrameworkLogic();
-            return await context.Customers.ToListAsync();
+            _Context = context;
         }
 
-        public static Customer Find(int id)
-        {
-            Customer customer = null;
-            using var context = new EntitiyFrameworkLogic();
-            customer = context.Customers.FirstOrDefault(x=> x.Id == id);
-            return customer;
-        }
-
-        public static bool Update(Customer customer)
-        {
-            using var context = new EntitiyFrameworkLogic();
-            Customer UpdatedCustomer =  context.Customers.Single(x=> x.Id ==customer.Id);
-
-            if (UpdatedCustomer!= null)
-            {
-                UpdatedCustomer.FirstName = customer.FirstName;
-                UpdatedCustomer.LastName = customer.LastName;
-                UpdatedCustomer.Email = customer.Email;
-                UpdatedCustomer.Phone = customer.Phone;
-                UpdatedCustomer.LastOrderDate = customer.LastOrderDate;
-                UpdatedCustomer.NumberOfOrders = customer.NumberOfOrders;
-                context.SaveChanges();
-                return true;
-            }
-            return false;
-        }
-        public static bool UpdateFirstName(Customer customer)
-        {
-            using var context = new EntitiyFrameworkLogic();
-            Customer UpdatedCustomer = context.Customers.Single(x => x.Id == customer.Id);
-
-            if (UpdatedCustomer != null)
-            {
-                UpdatedCustomer.FirstName = customer.FirstName;
-                context.SaveChanges();
-                return true;
-            }
-            return false;
-        }
-        public static bool UpdateLastName(Customer customer)
-        {
-            using var context = new EntitiyFrameworkLogic();
-            Customer UpdatedCustomer = context.Customers.Single(x => x.Id == customer.Id);
-
-            if (UpdatedCustomer != null)
-            {
-                UpdatedCustomer.LastName = customer.LastName;
-                context.SaveChanges();
-                return true;
-            }
-            return false;
-        }
-        public static bool UpdatePhone(Customer customer)
-        {
-            using var context = new EntitiyFrameworkLogic();
-            Customer UpdatedCustomer = context.Customers.Single(x => x.Id == customer.Id);
-
-            if (UpdatedCustomer != null)
-            {
-                UpdatedCustomer.Phone = customer.Phone;
-                context.SaveChanges();
-                return true;
-            }
-            return false;
-        }
-        public static bool UpdateNumberOfOrders(Customer customer)
-        {
-            using var context = new EntitiyFrameworkLogic();
-            Customer UpdatedCustomer = context.Customers.Single(x => x.Id == customer.Id);
-
-            if (UpdatedCustomer != null)
-            {
-                UpdatedCustomer.NumberOfOrders= customer.NumberOfOrders;
-                context.SaveChanges();
-                return true;
-            }
-            return false;
-        }
-        public static bool UpdateEmail(Customer customer)
-        {
-            using var context = new EntitiyFrameworkLogic();
-            Customer UpdatedCustomer = context.Customers.Single(x => x.Id == customer.Id);
-
-            if (UpdatedCustomer != null)
-            {
-                UpdatedCustomer.Email= customer.Email;
-                context.SaveChanges();
-                return true;
-            }
-            return false;
-        }
-        public static bool UpdateLastOrderDate(Customer customer)
-        {
-            using var context = new EntitiyFrameworkLogic();
-            Customer UpdatedCustomer = context.Customers.Single(x => x.Id == customer.Id);
-
-            if (UpdatedCustomer != null)
-            {
-                UpdatedCustomer.LastOrderDate= customer.LastOrderDate;
-                context.SaveChanges();
-                return true;
-            }
-            return false;
-        }
-        public static int Add(Customer newCustomer)
+        public async Task<List<Customer>> GetAllCustomersAsync()
         {
             try
             {
-                using var context = new EntitiyFrameworkLogic();
-                context.Customers.Add(newCustomer);
-                context.SaveChanges();
+                return await _Context.Customers.AsNoTracking().ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+          
+        }
+
+        public async Task<Customer?> FindAsync(int id,bool isTracking =false)
+        {
+            if(!isTracking)
+               return await _Context.Customers.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
+            else
+                return await _Context.Customers.FirstOrDefaultAsync(x => x.Id == id);
+
+        }
+
+        public async Task<bool> UpdateAsync(Customer Customer)
+        {
+            Customer  UpdatedCustomer = await  _Context.Customers.FirstOrDefaultAsync(x=> x.Id ==Customer.Id);
+
+            if (UpdatedCustomer!= null)
+            {
+                UpdatedCustomer.FirstName = Customer.FirstName;
+                UpdatedCustomer.LastName = Customer.LastName;
+                UpdatedCustomer.Email = Customer.Email;
+                UpdatedCustomer.Phone = Customer.Phone;
+                UpdatedCustomer.LastOrderDate = Customer.LastOrderDate;
+                UpdatedCustomer.NumberOfOrders = Customer.NumberOfOrders;
+                await _Context.SaveChangesAsync();
+                return true;
+            }
+            return false;
+          }
+
+
+        //public async Task<bool> ChangePasswordAsync(int id, string newHashPassword)
+        //{
+        //    var user = new User
+        //    {
+        //        Id = id
+        //    };
+        //    _Context.Attach(user);
+        //    user.Password = newHashPassword;
+        //    int rowsAffected = await _Context.SaveChangesAsync();
+        //    return rowsAffected > 0;
+
+        //}
+
+        
+        public async Task<bool> UpdateFirstNameAsync(int id ,string firstName)
+        {
+           
+            var customer = new Customer
+            {
+                Id = id
+            };
+           
+            _Context.Attach(customer);
+            customer.FirstName = firstName;
+            int rowsAffected = await _Context.SaveChangesAsync();
+            return rowsAffected > 0;
+        }
+        public async Task<bool> UpdateLastNameAsync(int id, string lastName)
+        {
+
+            var customer = new Customer
+            {
+                Id = id
+            };
+
+            _Context.Attach(customer);
+            customer.FirstName = lastName;
+            int rowsAffected = await _Context.SaveChangesAsync();
+            return rowsAffected > 0;
+        }
+        public async Task<bool> UpdatePhoneAsync(int id, string phone)
+        {
+
+            var customer = new Customer
+            {
+                Id = id
+            };
+
+            _Context.Attach(customer);
+            customer.Phone = phone;
+            int rowsAffected = await _Context.SaveChangesAsync();
+            return rowsAffected > 0;
+        }
+        public async Task<bool> UpdateNumberOfOrdersNameAsync(int id, int numberOfOders)
+        {
+
+            var customer = new Customer
+            {
+                Id = id
+            };
+
+            _Context.Attach(customer);
+            customer.NumberOfOrders = numberOfOders;
+            int rowsAffected = await _Context.SaveChangesAsync();
+            return rowsAffected > 0;
+        }
+        public async Task<bool> UpdateEmailAsync(int id, string email)
+        {
+
+            var customer = new Customer
+            {
+                Id = id
+            };
+
+            _Context.Attach(customer);
+            customer.Email = email;
+            int rowsAffected = await _Context.SaveChangesAsync();
+            return rowsAffected > 0;
+        }
+        public async Task<bool> UpdateLastOrderDateAsync(int id, DateTime lastOrderDate)
+        {
+
+            var customer = new Customer
+            {
+                Id = id
+            };
+
+            _Context.Attach(customer);
+            customer.LastOrderDate = lastOrderDate;
+            int rowsAffected = await _Context.SaveChangesAsync();
+            return rowsAffected > 0;
+        }
+
+        public async Task<int> AddAsync(Customer newCustomer)
+        {
+            try
+            {
+                _Context.Customers.Add(newCustomer);
+                await _Context.SaveChangesAsync();
                 return newCustomer.Id;
             }
             catch (Exception ex)
@@ -140,20 +170,29 @@ namespace EFDataAccessLayer.DatbaseClasses
            
            
         }
-        public static bool Delete(int id)
+        public async Task<bool> DeleteAsync(int id)
         {
-            using var context = new EntitiyFrameworkLogic();
-            if (context.Customers.Single(x => x.Id == id) != null)
+            try
+            {
+                Customer Customer = await _Context.Customers.FirstOrDefaultAsync(x => x.Id == id);
+                if (Customer == null)
+                {
+                    return false;
+                }
+                _Context.Customers.Remove(Customer);
+                await _Context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception ex)
             {
                 return false;
             }
-            context.Customers.Remove(context.Customers.Single(x=>x.Id == id));
-            context.SaveChanges();
-            return true;
+
         }
-        public static bool IsExist(int id)
+        public async Task<bool> ExistsAsync(int id)
         {
-            return true;
+           
+            return await _Context.Customers.AnyAsync(c => c.Id == id);
         }
     }
 }
