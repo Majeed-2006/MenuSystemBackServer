@@ -21,7 +21,7 @@ namespace EFDataAccessLayer.EFCore_Configuration
                   .HasColumnName("ProductID");
 
             entity.Property(p => p.IsAvailable)
-                  .HasColumnName("IsAvilable");
+                  .HasColumnName("IsAvailable");
 
             entity.Property(p => p.Name)
                   .HasColumnName("Name")
@@ -40,7 +40,7 @@ namespace EFDataAccessLayer.EFCore_Configuration
                   .HasColumnName("Price");
 
             entity.Property(p => p.RestaurantId)
-                  .HasColumnName("RestuarantId");
+                  .HasColumnName("RestaurantID");
 
             entity.HasOne(p => p.CreatedByUser)
                   .WithMany(p => p.Products)

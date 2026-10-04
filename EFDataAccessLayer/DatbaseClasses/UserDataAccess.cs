@@ -74,7 +74,6 @@ namespace EFDataAccessLayer.DatbaseClasses
         {
             try
             {
-
                 _Context.Users.Add(newUser);
                 await _Context.SaveChangesAsync();
                 return newUser.Id;
@@ -83,9 +82,8 @@ namespace EFDataAccessLayer.DatbaseClasses
             {
                 return -1;
             }
-
-
         }
+
         public async Task<bool> DeleteAsync(int id)
         {
             try
@@ -103,7 +101,6 @@ namespace EFDataAccessLayer.DatbaseClasses
             {
                 return false;
             }
-
         }
         public async Task<bool> ExistsAsync(int id)
         {

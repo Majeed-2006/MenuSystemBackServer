@@ -4,21 +4,22 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EFDataAccessLayer.DTOClasses
+namespace BusinessLayer.DTOClasses.Products
 {
    public class ProductDTO
     {
 
 
         public int Id { get; set; }
-        public string Name { get; set; }
-        public string Description { get; set; }
-        public float Price { get; set; }
+        public string Name { get; set; } = null!;
+        public string Description { get; set; } = null!;
+        public double Price { get; set; }
         public bool IsAvilable { get; set; }    
-        public int CreatedByUserID { get; set; }    
+        public int CreatedByUserID { get; set; }
+        public int CreatedByRestrauntID { get; set; }
         public int CategoryID { get; set; }
 
-        public ProductDTO(int id, string name, string description, float price, bool isAvilable,int createdByUserID, int categoryID)
+        public ProductDTO(int id, string name, string description, double price, bool isAvilable,int createdByUserID ,  int createdByRestrauntID, int categoryID)
         {
             Id = id;
             Name = name;
@@ -26,6 +27,7 @@ namespace EFDataAccessLayer.DTOClasses
             Price = price;
             IsAvilable = isAvilable;
             CreatedByUserID = createdByUserID;
+            CreatedByRestrauntID = createdByRestrauntID;
             CategoryID = categoryID;
         }
     }

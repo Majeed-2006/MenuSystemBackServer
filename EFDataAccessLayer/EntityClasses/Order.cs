@@ -4,7 +4,7 @@
     {
         //Primitive Properties
         public int Id { get; set; }
-        public float TotalPrice { get; set; }
+        public double TotalPrice { get; set; }
         public DateTime OrderDateTime { get; set; }
         public int OrderType { get; set; }
         public int PaymentStatus { get; set; }

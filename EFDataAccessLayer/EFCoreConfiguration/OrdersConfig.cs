@@ -38,14 +38,14 @@ namespace EFDataAccessLayer.EFCore_Configuration
                 .HasColumnName("DriverID");
                 
             entity.Property(p  => p.OrderDateTime)
-                .HasColumnName("OrderDateTime")
+                .HasColumnName("OderDateTime")
                   .HasDefaultValueSql("GETDATE()");
 
             entity.Property(p => p.OrderStatusId)
                 .HasColumnName("OrderStatusID");
 
             entity.Property(p => p.RestaurantId)
-                .HasColumnName("RestuarantId");
+                .HasColumnName("RestaurantID");
 
 
             entity.HasOne(p => p.Restaurant)

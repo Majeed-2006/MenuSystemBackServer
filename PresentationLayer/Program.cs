@@ -15,6 +15,18 @@ builder.Services.AddScoped<CustomerDataAccess>();
 builder.Services.AddScoped<CustomerService>();
 builder.Services.AddScoped<UserDataAccess>();
 builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<OrderService>();
+builder.Services.AddScoped<OrderDataAccess>();
+builder.Services.AddScoped<ProductService>();
+builder.Services.AddScoped<ProductDataAccess>();
+builder.Services.AddScoped<OrderItemService>();
+builder.Services.AddScoped<OrderItemDataAccess>();
+builder.Services.AddScoped<OrderStatusService>();
+builder.Services.AddScoped<OrderStatusDataAccess>();
+
+
+
+
 
 //builder.Services.AddControllers();
 builder.Services.AddControllers()

@@ -5,7 +5,7 @@
         //Primitive Properties
         public int Id { get; set; }
         public int Quantity { get; set; }
-        public float UnitPrice { get; set; }
+        public double UnitPrice { get; set; }
 
         //Foreign Keys
         public int OrderId { get; set; }
