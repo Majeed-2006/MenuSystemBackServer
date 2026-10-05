@@ -45,5 +45,14 @@ namespace App.API.GloabalClasses
             var regex = new Regex(pattern);
             return regex.IsMatch(password);
         }
+
+        public static bool ValidateSubDomain(string subdomain)
+        {
+            if (string.IsNullOrWhiteSpace(subdomain)) return false;
+
+            var pattern = @"^[a-z0-9](?:[a-z0-9\-]{1,61}[a-z0-9])?$";
+            var regex = new Regex(pattern);
+            return regex.IsMatch(subdomain);
+        }
     }
 }

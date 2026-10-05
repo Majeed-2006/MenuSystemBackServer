@@ -11,8 +11,10 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddScoped<AppDbContext>();
+
 builder.Services.AddScoped<CustomerDataAccess>();
 builder.Services.AddScoped<CustomerService>();
+
 builder.Services.AddScoped<UserDataAccess>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<OrderService>();
@@ -23,6 +25,15 @@ builder.Services.AddScoped<ProductDataAccess>();
 
 
 
+
+builder.Services.AddScoped<OrderItemDataAccess>();
+builder.Services.AddScoped<OrderItemService>();
+
+builder.Services.AddScoped<OrderStatusDataAccess>();
+builder.Services.AddScoped<OrderStatusService>();
+
+builder.Services.AddScoped<RestaurantDataAccess>();
+builder.Services.AddScoped<RestaurantService>();
 
 //builder.Services.AddControllers();
 builder.Services.AddControllers()

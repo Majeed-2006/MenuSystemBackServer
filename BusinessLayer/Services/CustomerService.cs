@@ -90,8 +90,16 @@ namespace BusinessLayer.Services
             Customer customer = await _CustomerDataAccess.FindAsync(id);
             if (customer != null)
             {
-                var customerDTO = new CustomerDTO(customer.Id, customer.FirstName, customer.LastName, customer.Phone,
-                                              customer.NumberOfOrders, customer.Email, customer.LastOrderDate, customer.RestaurantId);
+                var customerDTO = new CustomerDTO(
+                    customer.Id,
+                    customer.FirstName,
+                    customer.LastName,
+                    customer.Phone,
+                    customer.NumberOfOrders,
+                    customer.Email,
+                    customer.LastOrderDate,
+                    customer.RestaurantId
+                );
                 return customerDTO;
 
             }
@@ -103,8 +111,15 @@ namespace BusinessLayer.Services
             Customer customer = await _CustomerDataAccess.FindAsync(id,true);
             if (customer!= null)
             {
-                var customerSaveDTO = new CustomerSaveDTO(customer.FirstName, customer.LastName, customer.Phone, customer.NumberOfOrders,
-                                                           customer.Email, customer.LastOrderDate, customer.RestaurantId);
+                var customerSaveDTO = new CustomerSaveDTO (
+                    customer.FirstName,
+                    customer.LastName,
+                    customer.Phone,
+                    customer.NumberOfOrders,
+                    customer.Email,
+                    customer.LastOrderDate,
+                    customer.RestaurantId
+                );
                 return customerSaveDTO;
 
             }
@@ -115,17 +130,7 @@ namespace BusinessLayer.Services
         {
             if (await IsExistAsync(id))
             {
-                var customer = new Customer
-                {
-                    Id = id,
-                    FirstName = CustomerDTO.FirstName,
-                    LastName = CustomerDTO.LastName,
-                    Phone = CustomerDTO.Phone,
-                    NumberOfOrders = CustomerDTO.NumberOfOrders,
-                    Email = CustomerDTO.Email,
-                    LastOrderDate = CustomerDTO.LastOrderDate,
-                    RestaurantId = CustomerDTO.RestaurantId
-                };
+                var customer = ConvertToEntity(CustomerDTO);
                
                 return await _CustomerDataAccess.UpdateAsync(customer);
             }

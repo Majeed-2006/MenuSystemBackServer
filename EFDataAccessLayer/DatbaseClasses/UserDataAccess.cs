@@ -104,18 +104,15 @@ namespace EFDataAccessLayer.DatbaseClasses
         }
         public async Task<bool> ExistsAsync(int id)
         {
-
-            return await _Context.Users.AnyAsync(c => c.Id == id);
+           return await _Context.Users.AnyAsync(c => c.Id == id);
         }
         public async Task<bool> IsPasswordCorrectAsync(string userName,string hashPassword)
         {
-
             return await _Context.Users.AnyAsync(c => c.Password == hashPassword && c.UserName==userName);
         }
 
         public async Task<bool> LoginAsync(string username, string hashPassword)
         {
-
             return await _Context.Users.AnyAsync(c => c.Password == hashPassword && c.UserName == username);
 
         }

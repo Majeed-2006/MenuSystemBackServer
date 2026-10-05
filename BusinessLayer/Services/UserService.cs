@@ -154,10 +154,12 @@ namespace BusinessLayer.Services
         }
         public async Task<bool> LoginAsync(UserLoginDTO userLoginDTO)
         {
-            if ( await _UserDataAccess.LoginAsync(userLoginDTO.UserName, Encrypt(userLoginDTO.Password)))
+            if (await _UserDataAccess.LoginAsync(userLoginDTO.UserName, Encrypt(userLoginDTO.Password)))
                 return true;
             else
                 return false;
         }
+
+
     }
 }

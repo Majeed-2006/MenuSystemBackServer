@@ -23,11 +23,11 @@ namespace EFDataAccessLayer.EFCoreConfiguration
                   .HasColumnName("Name")
                   .HasMaxLength(100);
 
-            entity.Property(p => p.subDomain)
+            entity.Property(p => p.SubDomain)
                   .HasColumnName("SubDomain")
                   .HasMaxLength(50);
 
-            entity.HasIndex(p => p.subDomain)
+            entity.HasIndex(p => p.SubDomain)
                   .IsUnique();
 
             entity.Property(p => p.CreatedAt)

@@ -5,7 +5,7 @@
         //Primitive Properties 
         public int Id { get; set; }
         public string Name { get; set; } = null!;
-        public string subDomain { get; set; } = null!;
+        public string SubDomain { get; set; } = null!;
         public DateTime CreatedAt { get; set; }
         public bool IsDeleted { get; set; } = false;
 
