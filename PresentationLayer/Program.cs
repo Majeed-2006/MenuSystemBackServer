@@ -19,10 +19,6 @@ builder.Services.AddScoped<OrderService>();
 builder.Services.AddScoped<OrderDataAccess>();
 builder.Services.AddScoped<ProductService>();
 builder.Services.AddScoped<ProductDataAccess>();
-builder.Services.AddScoped<OrderItemService>();
-builder.Services.AddScoped<OrderItemDataAccess>();
-builder.Services.AddScoped<OrderStatusService>();
-builder.Services.AddScoped<OrderStatusDataAccess>();
 
 
 
