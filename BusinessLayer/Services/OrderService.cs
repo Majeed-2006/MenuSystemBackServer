@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using App.API.GlobalExceptionHandler.Exceptions;
+
 using BusinessLayer.DTOClasses.Customers.CustomerDTO;
 using BusinessLayer.DTOClasses.Customers.CustomerSaveDTO;
 using BusinessLayer.DTOClasses.Orders;
@@ -14,12 +14,18 @@ namespace BusinessLayer.Services
 {
     public class OrderService
     {
-
-
         private readonly OrderDataAccess _OrderDataAccess;
-        public OrderService(OrderDataAccess OrderDataAccess)
+        private readonly RestaurantDataAccess _RestaurantDataAccess;
+        private readonly CustomerDataAccess _CustomerDataAccess;
+        private readonly UserDataAccess _UserDataAccess;
+        public OrderService(OrderDataAccess OrderDataAccess,RestaurantDataAccess restaurantDataAccess,
+                            UserDataAccess userDataAccess,CustomerDataAccess customerDataAccess)
         {
             _OrderDataAccess = OrderDataAccess;
+            _RestaurantDataAccess = restaurantDataAccess;
+            _CustomerDataAccess = customerDataAccess;
+            _UserDataAccess = userDataAccess;
+
         }
 
         Order ConvertToEntity(OrderSaveDTO orderSaveDTO)
@@ -29,7 +35,6 @@ namespace BusinessLayer.Services
             if (orderSaveDTO!= null)
             {
                 order.TotalPrice = orderSaveDTO.TotalPrice;
-                order.OrderDateTime = orderSaveDTO.OrderDateTime;
                 return order;
             }
             return null;
@@ -47,7 +52,7 @@ namespace BusinessLayer.Services
                     order.PaymentStatus= orderAddDTO.PaymentStatus;
                     order.TotalPrice= orderAddDTO.TotalPrice;
                     order.OrderStatusId= orderAddDTO.OrderStatusID;
-                    order.OrderType= orderAddDTO.OrderrType;
+                    order.Type= orderAddDTO.Type;
                     order.OrderDateTime = orderAddDTO.OrderDateTime;
                     return order;
                 }
@@ -62,7 +67,7 @@ namespace BusinessLayer.Services
             var orders = await _OrderDataAccess.GetAllOrdersAsync();
             if (orders == null || !orders.Any())
             {
-                throw new BusinessException("empty List");
+               // throw new BusinessException("empty List");
             }
 
             return orders.Select(c => new OrderDTO(
@@ -74,7 +79,7 @@ namespace BusinessLayer.Services
                 c.DriverId,
                 c.TotalPrice,
                 c.OrderDateTime,
-                c.OrderType,
+                c.Type,
                 c.OrderStatusId,
                 c.PaymentStatus,
                 c.RestaurantId
@@ -86,6 +91,7 @@ namespace BusinessLayer.Services
         public async Task<int> AddAsync(OrderAddDTO orderDTO)
         {
             Order order = ConvertToEntity(orderDTO);
+
             return await _OrderDataAccess.AddAsync(order);
         }
         public async Task<OrderAddDTO> FindAsync(int id)
@@ -94,17 +100,13 @@ namespace BusinessLayer.Services
             if (order != null)
             {
                 var orderDTO= new OrderAddDTO(order.CustomerId,order.CashierId,order.WaiterId,order.DriverId,order.TotalPrice,
-                                           order.OrderDateTime,order.OrderType,order.OrderStatusId,order.PaymentStatus);
+                                           order.OrderDateTime,order.Type,order.OrderStatusId,order.PaymentStatus);
                 return orderDTO;
 
             }
             return null;
 
         }
-
-
-
-
 
 
         public async Task<bool> UpdateAsync(int id, OrderSaveDTO orderSaveDTO)
@@ -116,7 +118,7 @@ namespace BusinessLayer.Services
                     //shouldnt be id here but we have for code rn 
                     Id = id,
                     TotalPrice = orderSaveDTO.TotalPrice,
-                    OrderDateTime = orderSaveDTO.OrderDateTime,
+                  
                 };
 
                 return await _OrderDataAccess.UpdateAsync(order);
@@ -139,7 +141,7 @@ namespace BusinessLayer.Services
                     WaiterId = orderDTO.WaiterID,
                     CashierId = orderDTO.CashierID,
                     TotalPrice = orderDTO.TotalPrice,
-                    OrderType = orderDTO.OrderType,
+                    Type = orderDTO.Type,
                     OrderStatusId = orderDTO.OrderStatusID,
                     RestaurantId = orderDTO.RestrauntID
                 };

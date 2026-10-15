@@ -1,4 +1,4 @@
-﻿using App.API.GlobalExceptionHandler.Exceptions;
+﻿
 using BusinessLayer.DTOClasses.Users;
 using EFDataAccessLayer.DatbaseClasses;
 using EFDataAccessLayer.EntityClasses;
@@ -64,11 +64,6 @@ namespace BusinessLayer.Services
         public async Task<List<UserDTO>> GetAllUsersAsync()
         {
             var users = await _UserDataAccess.GetAllUsersAsync();
-            if (users==null || !users.Any())
-            {
-                throw new BusinessException("empty List");
-            }
-
             return users.Select( u=> new UserDTO(
 
                 u.Id,
@@ -87,7 +82,10 @@ namespace BusinessLayer.Services
         public async Task<int> AddAsync(UserAddDTO userSaveDTO)
         {
             User user= ConvertToEntity(userSaveDTO);
-            return await _UserDataAccess.AddAsync(user);
+            if (user.RestaurantId == user.Manager.RestaurantId)
+                return await _UserDataAccess.AddAsync(user);
+            else
+                return -1;
         }
         public async Task<UserDTO> FindAsync(int id)
         {
@@ -118,17 +116,11 @@ namespace BusinessLayer.Services
         {
             if (await IsExistAsync(id))
             {
-                User user =await _UserDataAccess.FindAsync(id);
-                user.FirstName = userSaveDTO.FirstName;
-                user.LastName = userSaveDTO.LastName;
-                user.Email = userSaveDTO.Email;
-                user.Phone = userSaveDTO.Phone;
-                user.UserName = userSaveDTO.UserName;
-                user.Address = userSaveDTO.Address;
-                user.RoleId = userSaveDTO.RoleId;
-                user.RestaurantId = userSaveDTO.RestaurantId;
-                user.ManagerId = userSaveDTO.ManagerId;
-                return await _UserDataAccess.UpdateAsync(user);
+                User user =ConvertToEntity(userSaveDTO);
+                user.Id = id;
+                if (user.RestaurantId == user.Manager.RestaurantId)
+                    return await _UserDataAccess.UpdateAsync(user);
+                return false;
             }
             return false;
         }

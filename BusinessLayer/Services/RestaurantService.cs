@@ -1,4 +1,4 @@
-﻿using App.API.GlobalExceptionHandler.Exceptions;
+﻿
 using BusinessLayer.DTOClasses.Restaurants;
 using  BusinessLayer.DTOClasses.Restaurants;
 using BusinessLayer.DTOClasses.Restaurants;
@@ -49,7 +49,7 @@ namespace BusinessLayer.Services
             var Restaurants = await _RestaurantDataAccess.GetAllRestaurantsAsync();
             if (Restaurants == null || !Restaurants.Any())
             {
-                throw new BusinessException("empty List");
+               // throw new BusinessException("empty List");
             }
 
             return Restaurants.Select(r => new RestaurantDTO(
@@ -105,8 +105,9 @@ namespace BusinessLayer.Services
         {
             if (await IsExistAsync(id))
             {
-                var Restaurant = ConvertToEntity(RestaurantDTO);
-                return await _RestaurantDataAccess.UpdateAsync(Restaurant);
+                var restaurant = ConvertToEntity(RestaurantDTO);
+                restaurant.Id = id;
+                return await _RestaurantDataAccess.UpdateAsync(restaurant);
             }
             return false;
         }

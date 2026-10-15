@@ -5,6 +5,7 @@ using EFDataAccessLayer.SettingClasses;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc.NewtonsoftJson;
 using System;
+using App.API.GloabalClasses;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,14 +18,12 @@ builder.Services.AddScoped<CustomerService>();
 
 builder.Services.AddScoped<UserDataAccess>();
 builder.Services.AddScoped<UserService>();
+
 builder.Services.AddScoped<OrderService>();
 builder.Services.AddScoped<OrderDataAccess>();
+
 builder.Services.AddScoped<ProductService>();
 builder.Services.AddScoped<ProductDataAccess>();
-
-
-
-
 
 builder.Services.AddScoped<OrderItemDataAccess>();
 builder.Services.AddScoped<OrderItemService>();
@@ -35,18 +34,25 @@ builder.Services.AddScoped<OrderStatusService>();
 builder.Services.AddScoped<RestaurantDataAccess>();
 builder.Services.AddScoped<RestaurantService>();
 
+builder.Services.AddScoped<CategoryDataAccess>();
+builder.Services.AddScoped<CategoryService>();
+
+
+builder.Services.AddScoped<RoleDataAccess>();
+builder.Services.AddScoped<RoleService>();
+
 //builder.Services.AddControllers();
 builder.Services.AddControllers()
                 .AddNewtonsoftJson(); 
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-
 builder.Services.AddBusinessServices(connectionString);
 
-//builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 var app = builder.Build();
 
 app.UseExceptionHandler(options => { });

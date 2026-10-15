@@ -8,6 +8,7 @@ namespace App.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public class RestaurantController : ControllerBase
     {
         private readonly RestaurantService _RestaurantService;
@@ -155,15 +156,19 @@ namespace App.API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
         public async Task<ActionResult> DeleteRestaurant(int id)
         {
             if (id < 1)
                 return BadRequest("Restaurant ID must be greater than 0.");
 
+            if (!await _RestaurantService.IsExistAsync(id))
+                return NotFound($"Restaurant with ID {id} was not found.");
+
             if (await _RestaurantService.DeleteAsync(id))
                 return Ok("Restaurant was deleted successfully.");
             else
-                return NotFound($"Restaurant with ID {id} was not found.");
+                return Conflict("Cannot delete this restaurant because it is linked to other entities.");
         }
     }
 }

@@ -35,7 +35,7 @@ namespace EFDataAccessLayer.EFCore_Configuration
                   .HasColumnName("PrepDuration");
 
             entity.Property(p => p.RestaurantId)
-                  .HasColumnName("RestuarantId");
+                  .HasColumnName("RestaurantID");
 
             entity.HasOne(p => p.Restaurant)
                 .WithMany(p => p.Categories)

@@ -1,4 +1,4 @@
-﻿namespace App.API.GlobalExceptionHandler.Exceptions
+﻿namespace BusinessLayer.Exceptions
 {
     public class BusinessException : Exception
     {

@@ -21,7 +21,7 @@ namespace EFDataAccessLayer.EFCore_Configuration
                   .HasColumnName("StateID");
                    
             entity.Property(p => p.EngName)
-                  .HasColumnName("SatetNameEng")
+                  .HasColumnName("StateNameEng")
                    .HasMaxLength(40);
 
             entity.Property(p => p.ArName)

@@ -30,8 +30,7 @@ namespace EFDataAccessLayer.DatbaseClasses
                 throw;
             }
         }
-
-
+      
         public async Task<Order?> FindAsync(int id, bool isTracking = false)
         {
             if (!isTracking)
@@ -39,7 +38,7 @@ namespace EFDataAccessLayer.DatbaseClasses
             else
                 return await _Context.Orders.FirstOrDefaultAsync(x => x.Id == id);
         }
-
+       
         // Should have check logic in buiss so u cant update in process order
         public async Task<bool> UpdateAsync(Order order)
         {
@@ -89,9 +88,16 @@ namespace EFDataAccessLayer.DatbaseClasses
                 return false;
             }
         }
+        public async Task<bool> CanDeletedCustomeAsync(int customerId)
+        {
+            return await _Context.Orders
+            .Where(o => o.CustomerId == customerId)
+            .AllAsync(o => o.OrderStatus.EngName == "Cancelled" || o.OrderStatus.EngName == "Completed");
+
+        }
+
         public async Task<bool> ExistsAsync(int id)
         {
-
             return await _Context.Orders.AnyAsync(c => c.Id == id);
         }
 

@@ -9,6 +9,7 @@ namespace App.API.Controllers
     [ApiController]
     public class OrderController : ControllerBase
     {
+
         private readonly OrderService _OrderService;
 
         public OrderController(OrderService OrderService)
@@ -43,19 +44,29 @@ namespace App.API.Controllers
             {
                 return BadRequest("Empty Customer ID ");
             }
-            else if (newOrder.CashierID == null)
-            {
-                return BadRequest("Empty Cashier ID ");
-            }
-            else if (newOrder.WaiterID == null)
-            {
-                return BadRequest("Empty Waiter ID ");
-            }
+          
             //this shouldnt be a check
-            /*else if (newOrder.DriverID == null)
+            else if (newOrder.Type == EFDataAccessLayer.Enum.OrderType.Delivery)
             {
-                return BadRequest("Empty Customer ID ");
-            }*/
+                if(newOrder.DriverID == null)
+                  return BadRequest("Order is online");
+
+                if (newOrder.WaiterID != null)
+                    return BadRequest("Cannot put waiter");
+            }
+            else if(newOrder.Type == EFDataAccessLayer.Enum.OrderType.DineIn)
+            {
+                if (newOrder.WaiterID == null)
+                    return BadRequest("Order is offline");
+
+                if (newOrder.DriverID != null)
+                    return BadRequest("Order is offline");
+            }
+            else if (newOrder.Type == EFDataAccessLayer.Enum.OrderType.Takeaway)
+            {
+                if (newOrder.WaiterID != null || newOrder.DriverID != null)
+                    return BadRequest("Order is takeaway");
+            }
             else if (newOrder.TotalPrice == null)
             {
                 return BadRequest("Empty Total price");
@@ -64,7 +75,7 @@ namespace App.API.Controllers
             {
                 return BadRequest("order date time must be known");
             }
-            else if (newOrder.OrderrType == null)
+            else if (newOrder.Type == null)
             {
                 return BadRequest("unknown order type");
             }
@@ -72,7 +83,7 @@ namespace App.API.Controllers
             {
                 return BadRequest("Empty status ID ");
             }
-            else if (newOrder.PaymentStatus== null)
+            else if (newOrder.PaymentStatus == null)
             {
                 return BadRequest("Empty payment status");
             }

@@ -1,4 +1,4 @@
-﻿using App.API.GlobalExceptionHandler.Exceptions;
+﻿
 using BusinessLayer.DTOClasses;
 using EFDataAccessLayer.DatbaseClasses;
 using EFDataAccessLayer.EntityClasses;
@@ -24,7 +24,7 @@ namespace BusinessLayer.Services
             var orderStatuses = await _OrderStatusDataAccess.GetAllOrderStatusesAsync();
             if (orderStatuses == null || !orderStatuses.Any())
             {
-                throw new BusinessException("empty List");
+                //throw new BusinessException("empty List");
             }
 
             return orderStatuses.Select(s => new OrderStatusDTO(

@@ -1,4 +1,4 @@
-﻿using App.API.GlobalExceptionHandler.Exceptions;
+﻿using BusinessLayer.Exceptions;
 using BusinessLayer.DTOClasses.Customers;
 using BusinessLayer.DTOClasses.Customers.CustomerDTO;
 using BusinessLayer.DTOClasses.Customers.CustomerSaveDTO;
@@ -18,9 +18,11 @@ namespace BusinessLayer.Services
     {
       
         private readonly CustomerDataAccess _CustomerDataAccess;
-        public CustomerService(CustomerDataAccess CustomerDataAccess) 
+        private readonly OrderDataAccess _OrderDataAccess;
+        public CustomerService(CustomerDataAccess CustomerDataAccess, OrderDataAccess orderDataAccess) 
         {
            _CustomerDataAccess = CustomerDataAccess;
+            _OrderDataAccess = orderDataAccess;
         }
 
         Customer ConvertToEntity(CustomerDTO CustomerDTO)
@@ -80,6 +82,7 @@ namespace BusinessLayer.Services
 
             )).ToList(); 
         }
+
         public async Task<int> AddAsync(CustomerSaveDTO CustomerDTO)
         {
             Customer Customer = ConvertToEntity(CustomerDTO);
@@ -126,19 +129,23 @@ namespace BusinessLayer.Services
             return null;
 
         }
-        public async Task<bool> UpdateAsync(int id,CustomerSaveDTO CustomerDTO)
+        public async Task<bool> UpdateAsync(int id,CustomerSaveDTO customerSaveDTO)
         {
             if (await IsExistAsync(id))
             {
-                var customer = ConvertToEntity(CustomerDTO);
-               
+                var customer = ConvertToEntity(customerSaveDTO);
+                customer.Id = id;
                 return await _CustomerDataAccess.UpdateAsync(customer);
             }
             return false;
         }
         public async Task<bool> DeleteAsync(int id)
         {
-            return await _CustomerDataAccess.DeleteAsync(id);
+            if (await _OrderDataAccess.CanDeletedCustomeAsync(id))
+                return await _CustomerDataAccess.DeleteAsync(id);
+       
+                return false;
+
         }
         public async Task<bool> IsExistAsync(int id)
         {

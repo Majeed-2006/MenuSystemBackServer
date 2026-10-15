@@ -1,4 +1,4 @@
-﻿using App.API.GlobalExceptionHandler.Exceptions;
+﻿
 using BusinessLayer.DTOClasses.OrderItems;
 using EFDataAccessLayer.DatbaseClasses;
 using EFDataAccessLayer.EntityClasses;
@@ -12,10 +12,14 @@ namespace BusinessLayer.Services
     public class OrderItemService
     {
         private readonly OrderItemDataAccess _OrderItemDataAccess;
-
-        public OrderItemService(OrderItemDataAccess orderItemDataAccess)
+        private readonly OrderDataAccess _OrderDataAccess;
+        private readonly ProductDataAccess _ProductDataAccess;
+        public OrderItemService(OrderItemDataAccess orderItemDataAccess, OrderDataAccess orderDataAccess,
+                                ProductDataAccess productDataAccess)
         {
             _OrderItemDataAccess = orderItemDataAccess;
+            _OrderDataAccess = orderDataAccess;
+            _ProductDataAccess = productDataAccess;
         }
 
         OrderItem ConvertToEntity(OrderItemDTO orderItemDTO)
@@ -52,7 +56,7 @@ namespace BusinessLayer.Services
             var orderItems = await _OrderItemDataAccess.GetAllOrderItemsAsync();
             if (orderItems == null || !orderItems.Any())
             {
-                throw new BusinessException("empty List");
+               // throw new BusinessException("empty List");
             }
 
             return orderItems.Select(o => new OrderItemDTO(
@@ -67,7 +71,10 @@ namespace BusinessLayer.Services
         public async Task<int> AddAsync(OrderItemSaveDTO orderItemDTO)
         {
             OrderItem orderItem = ConvertToEntity(orderItemDTO);
-            return await _OrderItemDataAccess.AddAsync(orderItem);
+            if (orderItem.Order.RestaurantId == orderItem.Product.RestaurantId)
+                return await _OrderItemDataAccess.AddAsync(orderItem);
+            else
+                return - 1;
         }
 
         public async Task<OrderItemDTO> FindAsync(int id)
@@ -108,7 +115,10 @@ namespace BusinessLayer.Services
             if (await IsExistAsync(id))
             {
                 var orderItem = ConvertToEntity(orderItemDTO);
-                return await _OrderItemDataAccess.UpdateAsync(orderItem);
+                orderItem.Id = id;
+                if (orderItem.Order.RestaurantId == orderItem.Product.RestaurantId)
+                    return await _OrderItemDataAccess.UpdateAsync(orderItem);
+                return false;
             }
             return false;
         }

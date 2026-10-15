@@ -1,4 +1,6 @@
-﻿namespace EFDataAccessLayer.EntityClasses
+﻿using EFDataAccessLayer.Enum;
+
+namespace EFDataAccessLayer.EntityClasses
 {
     public partial class Order
     {
@@ -6,7 +8,7 @@
         public int Id { get; set; }
         public double TotalPrice { get; set; }
         public DateTime OrderDateTime { get; set; }
-        public int OrderType { get; set; }
+        public OrderType Type { get; set; }
         public int PaymentStatus { get; set; }
 
         //Foreign Keys

@@ -7,6 +7,7 @@ namespace App.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public class OrderItemController : ControllerBase
     {
         private readonly OrderItemService _OrderItemService;
@@ -169,15 +170,19 @@ namespace App.API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
         public async Task<ActionResult> DeleteOrderItem(int id)
         {
             if (id < 1)
                 return BadRequest("Order Item ID must be greater than 0.");
 
+            if (!await _OrderItemService.IsExistAsync(id))
+                return NotFound($"Order Item with ID {id} was not found.");
+
             if (await _OrderItemService.DeleteAsync(id))
-                return Ok("Order item was deleted successfully.");
+                return Ok("Order Item was deleted successfully.");
             else
-                return NotFound($"Order item with ID {id} was not found.");
+                return Conflict("Cannot delete this order item because it is linked to other entities.");
         }
     }
 }

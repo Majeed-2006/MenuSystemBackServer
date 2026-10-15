@@ -22,7 +22,7 @@ namespace EFDataAccessLayer.EFCore_Configuration
             entity.Property(p => p.WaiterId)
                 .HasColumnName("WaiterID");
 
-            entity.Property(p => p.OrderType)
+            entity.Property(p => p.Type)
                 .HasColumnName("OrderType");
 
             entity.Property(p => p.PaymentStatus)

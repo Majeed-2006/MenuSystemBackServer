@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using App.API.GlobalExceptionHandler.Exceptions;
+
 using BusinessLayer.DTOClasses.Orders;
 using BusinessLayer.DTOClasses.Products;
 using BusinessLayer.DTOClasses.Users;
@@ -43,7 +43,7 @@ namespace BusinessLayer.Services
             var products= await _ProductDataAccess.GetAllProductsAsync();
             if (products== null || !products.Any())
             {
-                throw new BusinessException("empty List");
+              //  throw new BusinessException("empty List");
             }
 
             return products.Select(p=> new ProductDTO(

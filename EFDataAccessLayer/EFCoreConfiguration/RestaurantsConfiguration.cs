@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -35,9 +36,9 @@ namespace EFDataAccessLayer.EFCoreConfiguration
                   .HasColumnType("datetime")
                   .HasDefaultValueSql("GetDate()");
 
-            
+            entity.ToTable(p => p.HasTrigger("trg_OverrideDeleteRestaurant"));
 
-           
+
 
         }
     }

@@ -9,9 +9,11 @@ namespace App.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public class CustomerController : ControllerBase
     {
         private readonly CustomerService _CustomerService;
+
 
         public CustomerController(CustomerService CustomerService)
         {
@@ -94,8 +96,11 @@ namespace App.API.Controllers
 
                 return CreatedAtRoute("FindCustomerByID", new { Id = id }, CustomerDTO);
             }
-
-            return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while adding the customer.");
+            else
+                return StatusCode(
+                    StatusCodes.Status500InternalServerError,
+                    "An error occurred while adding the customer."
+                );
         }
 
         [HttpPatch("{id}", Name = "PatchCustomer")]
@@ -191,15 +196,19 @@ namespace App.API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
         public async Task<ActionResult> DeleteCustomer(int id)
         {
             if (id < 1)
                 return BadRequest("Customer ID must be greater than 0.");
 
+            if (!await _CustomerService.IsExistAsync(id))
+                return NotFound($"Customer with ID {id} was not found.");
+
             if (await _CustomerService.DeleteAsync(id))
                 return Ok("Customer was deleted successfully.");
             else
-                return NotFound($"Customer with ID {id} was not found.");
+                return Conflict("Cannot delete this customer because it is linked to other entities.");
         }
     }
 }

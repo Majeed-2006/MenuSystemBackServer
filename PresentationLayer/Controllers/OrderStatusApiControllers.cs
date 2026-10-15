@@ -19,6 +19,7 @@ namespace App.API.Controllers
         [HttpGet("All", Name = "GetAllOrderStatuses")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+
         public async Task<ActionResult<IEnumerable<OrderStatusDTO>>> GetAllOrderStatuses()
         {
             List<OrderStatusDTO> orderStatusesList = await _OrderStatusService.GetAllOrderStatusesAsync();

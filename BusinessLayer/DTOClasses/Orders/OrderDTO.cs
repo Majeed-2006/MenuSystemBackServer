@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EFDataAccessLayer.Enum;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,11 +16,12 @@ namespace BusinessLayer.DTOClasses.Orders
         public int? DriverID { get; set; }
         public double TotalPrice { get; set; }
         public DateTime OrderDateTime { get; set; }
-        public int OrderType { get; set; }
+        public OrderType Type { get; set; }
         public int OrderStatusID { get; set; }
         public int PaymentStatus {  get; set; }
         public int RestrauntID { get; set; }
-        public OrderDTO(int id, int customerID, int cashierID, int? waiterID, int? driverID, double totalPrice, DateTime orderDateTime, int orderType, int orderStatusID, int paymentStatus , int restrauntID)
+        public enum enOrderType { DineIn=1, Delivery = 2, Takeaway = 3 }
+        public OrderDTO(int id, int customerID, int cashierID, int? waiterID, int? driverID, double totalPrice, DateTime orderDateTime, OrderType orderType, int orderStatusID, int paymentStatus , int restrauntID)
         {
            Id = id;
            CustomerID = customerID;
@@ -28,7 +30,7 @@ namespace BusinessLayer.DTOClasses.Orders
            DriverID = driverID;
            TotalPrice = totalPrice;
            OrderDateTime = orderDateTime;
-           OrderType = orderType;
+           Type= orderType;
            OrderStatusID = orderStatusID;
            PaymentStatus = paymentStatus;
             RestrauntID = restrauntID;

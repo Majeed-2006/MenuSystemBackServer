@@ -234,15 +234,19 @@ namespace App.API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
         public async Task<ActionResult> DeleteUser(int id)
         {
             if (id < 1)
                 return BadRequest("User ID must be greater than 0.");
 
+            if (!await _UserService.IsExistAsync(id))
+                return NotFound($"User with ID {id} was not found.");
+
             if (await _UserService.DeleteAsync(id))
                 return Ok("User was deleted successfully.");
             else
-                return NotFound($"User with ID {id} was not found.");
+                return Conflict("Cannot delete this user because it is linked to other entities.");
         }
 
 
