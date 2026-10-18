@@ -64,5 +64,56 @@ namespace BusinessLayer.Services
             return await _ProductDataAccess.AddAsync(product);
         }
 
+        public async Task<bool> UpdateAsync(int id , ProductDTO productDTO)
+        {
+            if (await IsExistAsync(id))
+            {
+                Product product = ConvertToEntity(productDTO);
+                product.Id = id;
+                return await _ProductDataAccess.UpdateAsync(product);
+
+            }
+            return false;
+        }
+
+        public async Task<ProductDTO> FindAsync(int id)
+        {
+            Product Product = await _ProductDataAccess.FindAsync(id);
+            if (Product != null)
+            {
+                var productDTO = new ProductDTO(
+                    Product.Id,
+                    Product.Description,
+                    Product.Name,
+                    Product.Price,
+                    Product.IsAvailable,
+                    Product.CreatedByUserId,
+                    Product.RestaurantId,
+                    Product.CategoryId
+                );
+
+
+                return productDTO;
+
+            }
+            return null;
+
+        }
+
+        public async Task<bool> DeleteAsync(int id)
+        {
+            if (FindAsync(id) == null)
+            {
+                return false;
+            }
+            return await _ProductDataAccess.DeleteAsync(id);
+
+        }
+        public async Task<bool> IsExistAsync(int id)
+        {
+            return await _ProductDataAccess.ExistsAsync(id);
+        }
+
+
     }
 }

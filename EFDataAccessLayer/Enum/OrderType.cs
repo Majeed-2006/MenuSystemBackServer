@@ -8,6 +8,7 @@ namespace EFDataAccessLayer.Enum
 {
     public enum OrderType
     {
+        None = 0,
         DineIn = 1,
         Delivery = 2,
         Takeaway = 3
