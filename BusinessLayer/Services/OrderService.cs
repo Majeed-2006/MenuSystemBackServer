@@ -7,8 +7,10 @@ using System.Threading.Tasks;
 using BusinessLayer.DTOClasses.Customers.CustomerDTO;
 using BusinessLayer.DTOClasses.Customers.CustomerSaveDTO;
 using BusinessLayer.DTOClasses.Orders;
+using BusinessLayer.Exceptions;
 using EFDataAccessLayer.DatbaseClasses;
 using EFDataAccessLayer.EntityClasses;
+using EFDataAccessLayer.Enum;
 
 namespace BusinessLayer.Services
 {
@@ -49,6 +51,7 @@ namespace BusinessLayer.Services
                     order.WaiterId= orderAddDTO.WaiterID;
                     order.DriverId = orderAddDTO.DriverID;
                     order.CustomerId= orderAddDTO.CustomerID;
+                    order.RestaurantId = orderAddDTO.RestrauntID;
                     order.PaymentStatus= orderAddDTO.PaymentStatus;
                     order.TotalPrice= orderAddDTO.TotalPrice;
                     order.OrderStatusId= orderAddDTO.OrderStatusID;
@@ -85,11 +88,75 @@ namespace BusinessLayer.Services
                 c.RestaurantId
             )).ToList();
         }
+        public async Task<List<OrderDTO>> GetAllRestrauntOrdersAsync(int id)
+        {
+            var orders = await _OrderDataAccess.GetAllRestrauntsOrdersAsync(id);
+            if (orders == null || !orders.Any())
+            {
+                // throw new BusinessException("empty List");
+            }
 
+            return orders.Select(c => new OrderDTO(
+
+                c.Id,
+                c.CustomerId,
+                c.CashierId,
+                c.WaiterId,
+                c.DriverId,
+                c.TotalPrice,
+                c.OrderDateTime,
+                c.Type,
+                c.OrderStatusId,
+                c.PaymentStatus,
+                c.RestaurantId
+            )).ToList();
+        }
 
 
         public async Task<int> AddAsync(OrderAddDTO orderDTO)
         {
+            var cashier = await _UserDataAccess.FindAsync(orderDTO.CashierID);
+            User driver;
+            User waiter;
+            // MAGIC NUMBERS WARNING 
+            if (orderDTO.Type == OrderType.Delivery)
+            {
+                 driver = await _UserDataAccess.FindAsync(orderDTO.DriverID.Value);
+                 if ( driver.RoleId != 4)
+                        throw new BusinessException("driver ID is not a registered driver ID ");
+                 if (driver.Id != orderDTO.RestrauntID)
+                    throw new BusinessException("driver not working for the restraunt");
+            }
+
+            else if (orderDTO.Type == OrderType.DineIn)
+            {
+                waiter = await _UserDataAccess.FindAsync(orderDTO.WaiterID.Value);
+                if (waiter.RoleId != 3)
+                    throw new BusinessException("Waiter ID is not a registered waiter ID ");
+                if (waiter.Id != orderDTO.RestrauntID)
+                    throw new BusinessException("waiter not working for the restraunt");
+            }
+            
+            if (cashier.RoleId != 2 )
+            {
+                throw new BusinessException("Cashier ID is not a registered cashier ID ");
+            }
+
+            if (cashier.Id != orderDTO.RestrauntID)
+                throw new BusinessException("cashier not working for the restraunt");
+
+            if (!(await _CustomerDataAccess.ExistsAsync(orderDTO.CustomerID)))
+            {
+                throw new BusinessException("Customer is not a registered cusomter  ");
+            }
+
+            if (!(await _RestaurantDataAccess.ExistsAsync(orderDTO.RestrauntID)))
+            {
+                throw new BusinessException("Restraunt id does not exits ");
+            }
+
+
+
             Order order = ConvertToEntity(orderDTO);
 
             return await _OrderDataAccess.AddAsync(order);
@@ -99,7 +166,7 @@ namespace BusinessLayer.Services
             Order order = await _OrderDataAccess.FindAsync(id);
             if (order != null)
             {
-                var orderDTO= new OrderAddDTO(order.CustomerId,order.CashierId,order.WaiterId,order.DriverId,order.TotalPrice,
+                var orderDTO= new OrderAddDTO(order.CustomerId,order.CashierId,order.WaiterId,order.DriverId,order.RestaurantId,order.TotalPrice,
                                            order.OrderDateTime,order.Type,order.OrderStatusId,order.PaymentStatus);
                 return orderDTO;
 

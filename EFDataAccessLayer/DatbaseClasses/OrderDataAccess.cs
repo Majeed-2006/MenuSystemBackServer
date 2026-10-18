@@ -30,7 +30,20 @@ namespace EFDataAccessLayer.DatbaseClasses
                 throw;
             }
         }
-      
+
+        public async Task<List<Order>> GetAllRestrauntsOrdersAsync(int id)
+        {
+            try
+            {
+                return await _Context.Orders.Where(O => O.RestaurantId ==id).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+
         public async Task<Order?> FindAsync(int id, bool isTracking = false)
         {
             if (!isTracking)
