@@ -10,16 +10,19 @@ using System.Linq;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
-
+using EFDataAccessLayer.Enum;
 namespace BusinessLayer.Services
 {
     public class CategoryService
     {
         private readonly CategoryDataAccess _CategoryDataAccess;
-
-        public CategoryService(CategoryDataAccess categoryDataAccess)
+        private readonly UserDataAccess _UserDataAccess;
+        private readonly RoleDataAccess _RoleDataAccess;
+        public CategoryService(CategoryDataAccess categoryDataAccess,UserDataAccess userDataAccess,RoleDataAccess roleDataAccess)
         {
             _CategoryDataAccess = categoryDataAccess;
+            _UserDataAccess = userDataAccess;
+            _RoleDataAccess = roleDataAccess;
         }
 
         Category ConvertToEntity(CategoryDTO categoryDTO)
@@ -73,7 +76,15 @@ namespace BusinessLayer.Services
         public async Task<int> AddAsync(CategorySaveDTO categorySaveDTO)
         {
             Category category = ConvertToEntity(categorySaveDTO);
-            return await _CategoryDataAccess.AddAsync(category);
+            List<Role> roles = await _RoleDataAccess.GetAllRolesAsync();
+            if (category.CreatedByUserId == roles.FirstOrDefault(r => r.Name == "Admin")?.Id || category.CreatedByUserId == roles.FirstOrDefault(r => r.Name == "Cashier")?.Id)
+            {
+                var user = await _UserDataAccess.FindAsync(category.CreatedByUserId);
+                if (category.RestaurantId == user.RestaurantId)
+                    return await _CategoryDataAccess.AddAsync(category);
+
+            }
+            return -1;
         }
 
         public async Task<CategoryDTO> FindAsync(int id)
@@ -119,9 +130,16 @@ namespace BusinessLayer.Services
             if (await IsExistAsync(id))
             {
                 var category = ConvertToEntity(categorySaveDTO);
-                category.Id = id;
-
-                return await _CategoryDataAccess.UpdateAsync(category);
+                List<Role> roles = await _RoleDataAccess.GetAllRolesAsync();
+                if (category.CreatedByUserId == roles.FirstOrDefault(r => r.Name == "Admin")?.Id || category.CreatedByUserId == roles.FirstOrDefault(r => r.Name == "Cashier")?.Id)
+                {
+                    var user = await _UserDataAccess.FindAsync(category.CreatedByUserId);
+                    if (category.RestaurantId == user.RestaurantId)
+                    {
+                        category.Id = id;
+                        return await _CategoryDataAccess.UpdateAsync(category);
+                    }
+                }
             }
             return false;
         }

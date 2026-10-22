@@ -85,7 +85,7 @@ namespace App.API.Controllers
             if (updatedOrder == null)
                 return BadRequest("Updated Order data cannot be empty.");
 
-            if (updatedOrder.TotalPrice ==0)
+            if (updatedOrder.TotalPrice <=0)
                 return BadRequest("Total Price is Invalid.");
 
             if (updatedOrder.PaymentStatus == 0 )

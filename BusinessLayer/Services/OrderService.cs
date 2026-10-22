@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using EFDataAccessLayer.Enum;
 using BusinessLayer.DTOClasses.Customers.CustomerDTO;
 using BusinessLayer.DTOClasses.Customers.CustomerSaveDTO;
 using BusinessLayer.DTOClasses.Orders;
@@ -20,13 +20,15 @@ namespace BusinessLayer.Services
         private readonly RestaurantDataAccess _RestaurantDataAccess;
         private readonly CustomerDataAccess _CustomerDataAccess;
         private readonly UserDataAccess _UserDataAccess;
+        private readonly RoleDataAccess _RoleDataAccess;
         public OrderService(OrderDataAccess OrderDataAccess,RestaurantDataAccess restaurantDataAccess,
-                            UserDataAccess userDataAccess,CustomerDataAccess customerDataAccess)
+                            UserDataAccess userDataAccess,CustomerDataAccess customerDataAccess,RoleDataAccess roleDataAccess)
         {
             _OrderDataAccess = OrderDataAccess;
             _RestaurantDataAccess = restaurantDataAccess;
             _CustomerDataAccess = customerDataAccess;
             _UserDataAccess = userDataAccess;
+            _RoleDataAccess = roleDataAccess;
 
         }
 
@@ -116,47 +118,45 @@ namespace BusinessLayer.Services
         public async Task<int> AddAsync(OrderAddDTO orderDTO)
         {
             var cashier = await _UserDataAccess.FindAsync(orderDTO.CashierID);
+            List<Role> _Roles = await _RoleDataAccess.GetAllRolesAsync();
+
             User driver;
             User waiter;
-            // MAGIC NUMBERS WARNING 
+            
             if (orderDTO.Type == OrderType.Delivery)
             {
                  driver = await _UserDataAccess.FindAsync(orderDTO.DriverID.Value);
-                 if ( driver.RoleId != 4)
+
+                 if ( driver.RoleId != _Roles.FirstOrDefault(r => r.Name == "Delivery")?.Id)
                         throw new BusinessException("driver ID is not a registered driver ID ");
-                 if (driver.Id != orderDTO.RestrauntID)
+
+                 if (driver.RestaurantId != orderDTO.RestrauntID)
                     throw new BusinessException("driver not working for the restraunt");
             }
 
             else if (orderDTO.Type == OrderType.DineIn)
             {
                 waiter = await _UserDataAccess.FindAsync(orderDTO.WaiterID.Value);
-                if (waiter.RoleId != 3)
+
+                if (waiter.RoleId != _Roles.FirstOrDefault(r => r.Name == "Waiter")?.Id)
                     throw new BusinessException("Waiter ID is not a registered waiter ID ");
-                if (waiter.Id != orderDTO.RestrauntID)
+
+                if (waiter.RestaurantId != orderDTO.RestrauntID)
                     throw new BusinessException("waiter not working for the restraunt");
             }
             
-            if (cashier.RoleId != 2 )
+            if (cashier.RoleId != _Roles.FirstOrDefault(r => r.Name == "Cashier")?.Id)
             {
                 throw new BusinessException("Cashier ID is not a registered cashier ID ");
             }
 
-            if (cashier.Id != orderDTO.RestrauntID)
+            if (cashier.RestaurantId != orderDTO.RestrauntID)
                 throw new BusinessException("cashier not working for the restraunt");
 
             if (!(await _CustomerDataAccess.ExistsAsync(orderDTO.CustomerID)))
             {
                 throw new BusinessException("Customer is not a registered cusomter  ");
             }
-
-            if (!(await _RestaurantDataAccess.ExistsAsync(orderDTO.RestrauntID)))
-            {
-                throw new BusinessException("Restraunt id does not exits ");
-            }
-
-
-
             Order order = ConvertToEntity(orderDTO);
 
             return await _OrderDataAccess.AddAsync(order);
@@ -180,12 +180,16 @@ namespace BusinessLayer.Services
         {
             if (await IsExistAsync(id))
             {
+
                 var order= new Order
                 {
                     //shouldnt be id here but we have for code rn 
                     Id = id,
+                    PaymentStatus= orderSaveDTO.PaymentStatus, 
                     TotalPrice = orderSaveDTO.TotalPrice,
-                  
+                    OrderStatusId = orderSaveDTO.OderStatusID,
+                    Type = orderSaveDTO.Type
+
                 };
 
                 return await _OrderDataAccess.UpdateAsync(order);

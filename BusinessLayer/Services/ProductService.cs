@@ -15,10 +15,12 @@ namespace BusinessLayer.Services
     public class ProductService
     {
         private readonly ProductDataAccess _ProductDataAccess;
+        private readonly UserDataAccess _UserDataAccess;
 
-        public ProductService(ProductDataAccess productDataAccess)
+        public ProductService(ProductDataAccess productDataAccess, UserDataAccess userDataAccess)
         {
             _ProductDataAccess= productDataAccess;
+            _UserDataAccess = userDataAccess;
         }
         Product ConvertToEntity(ProductDTO productDTO)
         {
@@ -61,7 +63,15 @@ namespace BusinessLayer.Services
         public async Task<int> AddAsync(ProductDTO productDTO)
         {
             Product product = ConvertToEntity(productDTO);
-            return await _ProductDataAccess.AddAsync(product);
+            if (product.CreatedByUserId == 2 || product.CreatedByUserId == 1)
+            {
+                var user = await _UserDataAccess.FindAsync(product.CreatedByUserId);
+                if (product.RestaurantId == user.RestaurantId)
+                    return await _ProductDataAccess.AddAsync(product);
+
+            }
+            return -1;
+         
         }
 
         public async Task<bool> UpdateAsync(int id , ProductDTO productDTO)
@@ -69,9 +79,15 @@ namespace BusinessLayer.Services
             if (await IsExistAsync(id))
             {
                 Product product = ConvertToEntity(productDTO);
-                product.Id = id;
-                return await _ProductDataAccess.UpdateAsync(product);
-
+                if (product.CreatedByUserId == 2 || product.CreatedByUserId == 1)
+                {
+                    var user = await _UserDataAccess.FindAsync(product.CreatedByUserId);
+                    if (product.RestaurantId == user.RestaurantId)
+                    {
+                        product.Id = id;
+                        return await _ProductDataAccess.UpdateAsync(product);
+                    }
+                }
             }
             return false;
         }

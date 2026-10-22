@@ -48,8 +48,12 @@ namespace EFDataAccessLayer.EFCore_Configuration
                   .HasColumnName("Phone")
                   .HasMaxLength(30);
 
-            entity.Property(p => p.RoleId)
-                  .HasColumnName("RoleID");
+            entity.HasOne(p => p.Role)
+                  .WithMany(p => p.Users)
+                  .HasForeignKey(p => p.RoleId)
+                  .OnDelete(DeleteBehavior.Restrict)
+                  .HasConstraintName("FK_Users_Roles");  
+
 
             entity.HasOne(p => p.Restaurant)
                   .WithMany(p => p.Users)
