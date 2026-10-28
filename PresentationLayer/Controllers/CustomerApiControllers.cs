@@ -69,8 +69,8 @@ namespace App.API.Controllers
 
             if (string.IsNullOrWhiteSpace(newCustomer.Phone))
                 return BadRequest("Phone number is required.");
-
-            if (newCustomer.Phone.Length != 10)
+            
+            if (newCustomer.Phone.Length != 10)//11?
                 return BadRequest("Phone number must be exactly 10 digits.");
 
             if (!string.IsNullOrEmpty(newCustomer.Email) && !ValidateEmail(newCustomer.Email))

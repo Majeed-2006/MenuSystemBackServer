@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using BusinessLayer.DTOClasses.Orders;
 using BusinessLayer.DTOClasses.Products;
 using BusinessLayer.DTOClasses.Users;
+using BusinessLayer.Exceptions;
 using EFDataAccessLayer.DatbaseClasses;
 using EFDataAccessLayer.EntityClasses;
 
@@ -16,11 +17,13 @@ namespace BusinessLayer.Services
     {
         private readonly ProductDataAccess _ProductDataAccess;
         private readonly UserDataAccess _UserDataAccess;
+        private readonly RoleDataAccess _RoleDataAccess;
 
-        public ProductService(ProductDataAccess productDataAccess, UserDataAccess userDataAccess)
+        public ProductService(ProductDataAccess productDataAccess, UserDataAccess userDataAccess, RoleDataAccess roleDataAccess)
         {
-            _ProductDataAccess= productDataAccess;
+            _ProductDataAccess = productDataAccess;
             _UserDataAccess = userDataAccess;
+            _RoleDataAccess = roleDataAccess;
         }
         Product ConvertToEntity(ProductDTO productDTO)
         {
@@ -62,6 +65,20 @@ namespace BusinessLayer.Services
 
         public async Task<int> AddAsync(ProductDTO productDTO)
         {
+            User userRole = await _UserDataAccess.FindAsync(productDTO.CreatedByUserID);
+            List<Role> _Roles = await _RoleDataAccess.GetAllRolesAsync();
+
+            if (userRole.RestaurantId != productDTO.CreatedByRestrauntID )
+            {
+                throw new BusinessException("User ID doesnt match the restraunt ID");
+            }
+            if (userRole.RoleId != _Roles.FirstOrDefault(r => r.Name == "Cashier")?.Id || userRole.RoleId != _Roles.FirstOrDefault(r => r.Name == "Admin")?.Id)
+            {
+                throw new BusinessException("User RoleID doesnt have adminstrive access");
+            }
+
+
+
             Product product = ConvertToEntity(productDTO);
             if (product.CreatedByUserId == 2 || product.CreatedByUserId == 1)
             {
@@ -76,6 +93,21 @@ namespace BusinessLayer.Services
 
         public async Task<bool> UpdateAsync(int id , ProductDTO productDTO)
         {
+            User userRole = await _UserDataAccess.FindAsync(productDTO.CreatedByUserID);
+            List<Role> _Roles = await _RoleDataAccess.GetAllRolesAsync();
+
+            if (userRole.RestaurantId != productDTO.CreatedByRestrauntID)
+            {
+                throw new BusinessException("User ID doesnt match the restraunt ID");
+            }
+            if (userRole.RoleId != _Roles.FirstOrDefault(r => r.Name == "Cashier")?.Id || userRole.RoleId != _Roles.FirstOrDefault(r => r.Name == "Admin")?.Id)
+            {
+                throw new BusinessException("User RoleID doesnt have adminstrive access");
+            }
+
+
+
+
             if (await IsExistAsync(id))
             {
                 Product product = ConvertToEntity(productDTO);

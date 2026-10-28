@@ -43,7 +43,7 @@ namespace App.API.Controllers
             {
                 return BadRequest("Product ID must be greater than 0.");
             }
-            // its AddDTO as we dont need the more complex DTO for this 
+            // its the same AddDTO as we dont need a more complex DTO for this 
             ProductDTO ProductDTO= await _ProductrService.FindAsync(id);
 
             if (ProductDTO == null)
@@ -86,7 +86,7 @@ namespace App.API.Controllers
                 return BadRequest("discription is incorrect.");
 
 
-            if (updatedProduct.Price ==0)
+            if (updatedProduct.Price <=0)
                 return BadRequest("Price is Not Correct.");
             
             if (await _ProductrService.UpdateAsync(id, updatedProduct))
@@ -139,7 +139,7 @@ namespace App.API.Controllers
                 return BadRequest("discription is incorrect.");
 
 
-            if (ProductDTO.Price == 0)
+            if (ProductDTO.Price <= 0)
                 return BadRequest("Price is Not Correct.");
 
 

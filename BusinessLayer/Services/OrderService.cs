@@ -178,6 +178,7 @@ namespace BusinessLayer.Services
 
         public async Task<bool> UpdateAsync(int id, OrderSaveDTO orderSaveDTO)
         {
+            //Order needs to return an API key or an autoization token to be used to make changes to Active order's
             if (await IsExistAsync(id))
             {
 

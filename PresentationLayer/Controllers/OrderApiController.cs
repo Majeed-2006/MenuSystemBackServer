@@ -16,7 +16,7 @@ namespace App.API.Controllers
 
         public OrderController(OrderService OrderService)
         {
-             _OrderService = OrderService;
+            _OrderService = OrderService;
         }
 
         [HttpGet("All", Name = "GetAllOrders")]
@@ -25,7 +25,7 @@ namespace App.API.Controllers
         public async Task<ActionResult<IEnumerable<OrderDTO>>> GetAllOrders()
         {
             List<OrderDTO> OrderList = await _OrderService.GetAllOrdersAsync();
-            if (OrderList== null || OrderList.Count == 0)
+            if (OrderList == null || OrderList.Count == 0)
                 return NotFound("No customers found");
             return Ok(OrderList);
         }
@@ -36,7 +36,7 @@ namespace App.API.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<IEnumerable<OrderDTO>>> GetOrderID(int id)
         {
-            if (id <1)
+            if (id < 1)
             {
                 return BadRequest("Order ID must be greater than 0.");
             }
@@ -85,10 +85,10 @@ namespace App.API.Controllers
             if (updatedOrder == null)
                 return BadRequest("Updated Order data cannot be empty.");
 
-            if (updatedOrder.TotalPrice <=0)
+            if (updatedOrder.TotalPrice <= 0)
                 return BadRequest("Total Price is Invalid.");
 
-            if (updatedOrder.PaymentStatus == 0 )
+            if (updatedOrder.PaymentStatus == 0)
                 return BadRequest("payment status is Unknown.");
 
             if (updatedOrder.Type == 0)
@@ -96,7 +96,7 @@ namespace App.API.Controllers
                 return BadRequest("Type is Unknown.");
             }
 
-            if (updatedOrder.OderStatusID <1)
+            if (updatedOrder.OderStatusID < 1)
                 return BadRequest("orderstatus is incorrect.");
 
             if (await _OrderService.UpdateAsync(id, updatedOrder))
@@ -131,24 +131,23 @@ namespace App.API.Controllers
             {
                 return BadRequest("Order Empty");
             }
-            else if (newOrder.CustomerID == null)
+            else if (newOrder.CustomerID == null || newOrder.CustomerID < 1)
             {
                 return BadRequest("Empty Customer ID ");
             }
-          
-            //this shouldnt be a check
+
             else if (newOrder.Type == EFDataAccessLayer.Enum.OrderType.Delivery)
             {
-                if(newOrder.DriverID == null)
-                  return BadRequest("Order is online");
+                if (newOrder.DriverID == null || newOrder.DriverID< 1)
+                    return BadRequest("DriverID is incorrect ");
 
                 if (newOrder.WaiterID != null)
                     return BadRequest("Cannot put waiter");
             }
-            else if(newOrder.Type == EFDataAccessLayer.Enum.OrderType.DineIn)
+            else if (newOrder.Type == EFDataAccessLayer.Enum.OrderType.DineIn)
             {
-                if (newOrder.WaiterID == null)
-                    return BadRequest("Order is offline");
+                if (newOrder.WaiterID == null || newOrder.WaiterID < 1)
+                    return BadRequest("WaiterId is incorrect");
 
                 if (newOrder.DriverID != null)
                     return BadRequest("Order is offline");
@@ -158,13 +157,13 @@ namespace App.API.Controllers
                 if (newOrder.WaiterID != null || newOrder.DriverID != null)
                     return BadRequest("Order is takeaway");
             }
-            else if (newOrder.TotalPrice == null)
+            else if (newOrder.TotalPrice == null || newOrder.TotalPrice <= 0)
             {
-                return BadRequest("Empty Total price");
+                return BadRequest("incorrect Total price");
             }
-            else if (newOrder.OrderDateTime == null)
+            else if (newOrder.OrderDateTime == null || newOrder.OrderDateTime > DateTime.Now)
             {
-                return BadRequest("order date time must be known");
+                return BadRequest("order date time must be known/cannot be in furture");
             }
             else if (newOrder.Type == null)
             {
